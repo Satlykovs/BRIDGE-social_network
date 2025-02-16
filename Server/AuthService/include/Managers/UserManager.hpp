@@ -25,6 +25,8 @@ namespace auth_service
     std::string HashPassword(const std::string& password);
 
     bool VerifyPassword(const std::string& password, const std::string& hash);
+    bool IsValidPassword(const std::string& password);
+    void ValidatePassword(const std::string& password);
 
 }
 

@@ -22,18 +22,26 @@ namespace auth_service
             
             auto user_data = request_json.As<auth_service::models::UserRegistrationDTO>();
 
-            bool result = userManager_.RegisterUser(user_data);
-            if (result)
+            try
             {
-                return userver::formats::json::MakeObject("message", fmt::format("User '{}' registered successfully", user_data.email));
+                bool result = userManager_.RegisterUser(user_data);
+                if (result)
+                {
+                    return userver::formats::json::MakeObject("message", fmt::format("User '{}' registered successfully", user_data.email));
+                }
+                else
+                {
+
+                    throw userver::server::handlers::ClientError(
+                        userver::server::handlers::ExternalBody{fmt::format("User with email '{}' already exists", user_data.email)});
+                }
+
             }
-            else
+            catch (const std::invalid_argument& e)
             {
-
-                throw userver::server::handlers::ClientError(
-                    userver::server::handlers::ExternalBody{fmt::format("User with email '{}' already exists", user_data.email)});
+                throw userver::server::handlers::ClientError(userver::server::handlers::ExternalBody{e.what()});
             }
-
+            
             
         }
 }
