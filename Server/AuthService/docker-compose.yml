@@ -1,0 +1,41 @@
+services:
+  auth_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    hostname: auth-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  auth_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      auth_db:
+        condition: service_healthy
+    hostname: auth-service
+    ports:
+      - 8080:8080
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    hostname: host-pgadmin  
+    ports:
+      - "5050:80"
+    depends_on:
+      - auth_db
+
+volumes:
+  postgres_data:
