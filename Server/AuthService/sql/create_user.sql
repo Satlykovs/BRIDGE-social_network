@@ -1,3 +1,3 @@
-INSERT INTO users(first_name, last_name, email, password_hash)
-VALUES ($1, $2, $3, $4)
+INSERT INTO users(email, password_hash)
+VALUES ($1, $2)
 ON CONFLICT (email) DO NOTHING

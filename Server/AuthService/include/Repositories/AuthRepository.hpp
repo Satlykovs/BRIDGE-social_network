@@ -1,0 +1,31 @@
+#ifndef AUTH_REPOSITORY_HPP
+#define AUTH_REPOSITORY_HPP
+
+#include "schemas/User.hpp"
+
+#include <userver/components/component_fwd.hpp> 
+#include <userver/storages/postgres/cluster.hpp>
+#include <userver/storages/postgres/component.hpp>
+
+#include <optional>
+
+namespace auth_service
+{
+    class AuthRepository final : public userver::components::ComponentBase
+    {
+        public:
+            static constexpr std::string_view kName = "auth-storage";
+
+            AuthRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
+
+            std::optional<auth_service::models::User> FindUserByEmail(const std::string& email);
+            bool CreateUser(const std::string& email, const std::string& password_hash);
+
+        private:
+            userver::storages::postgres::ClusterPtr pgCluster_;
+    };
+}   
+
+
+
+#endif

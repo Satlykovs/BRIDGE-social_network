@@ -13,16 +13,26 @@ components_manager:
       sync-start: true
       connlimit_mode: manual
 
-    user-manager: {}
-    user-storage: {}
+    auth-manager: {}
+    auth-storage: {}
+    
+    jwt-manager:
+      secret-key: $secret-key 
+      token-lifetime: $token-lifetime
+    
+
     testsuite-support: {}
 
     dns-client:
             fs-task-processor: fs-task-processor
 
     register-handler:
-      path: /api
-      method: GET
+      path: /auth/register
+      method: POST
+      task_processor: main-task-processor
+    login-handler:
+      path: /auth/login
+      method: POST
       task_processor: main-task-processor
     logging:  
       fs-task-processor: fs-task-processor

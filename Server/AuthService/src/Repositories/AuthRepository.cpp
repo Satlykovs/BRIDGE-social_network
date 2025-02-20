@@ -1,5 +1,5 @@
 
-#include "Models/UserStorage.hpp"
+#include "Repositories/AuthRepository.hpp"
 #include "schemas/User.hpp"
 #include "sql/include/sql_queries/sql_queries.hpp"
 #include <userver/storages/postgres/cluster.hpp>
@@ -13,7 +13,7 @@
 
 namespace auth_service
 {
-    UserStorage::UserStorage(const userver::components::ComponentConfig& config,
+    AuthRepository::AuthRepository(const userver::components::ComponentConfig& config,
         const userver::components::ComponentContext& context) : ComponentBase(config, context), 
         pgCluster_(context.FindComponent<userver::components::Postgres>("auth-db").GetCluster()) 
         {
@@ -21,7 +21,7 @@ namespace auth_service
         }
         
 
-        std::optional<auth_service::models::User> UserStorage::FindUserByEmail(const std::string& email)
+        std::optional<auth_service::models::User> AuthRepository::FindUserByEmail(const std::string& email)
         {
             auto result = pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kFindUserByEmail, email);  
 
@@ -32,9 +32,9 @@ namespace auth_service
             return std::nullopt;
         }
 
-        bool UserStorage::CreateUser(const std::string& first_name, const std::string& last_name, const std::string& email, const std::string& password_hash)
+        bool AuthRepository::CreateUser(const std::string& email, const std::string& password_hash)
         {
-            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateUser, first_name, last_name, email, password_hash);
+            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateUser, email, password_hash);
 
             return true;
         }

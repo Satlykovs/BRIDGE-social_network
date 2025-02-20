@@ -1,45 +1,9 @@
 components:
   schemas:
-    CommonUserFields:
+    UserDTO:
       type: object
       additionalProperties: false
       properties:
-        first_name:
-          type: string
-          minLength: 1
-          maxLength: 255
-          description: 'Имя пользователя.'
-        last_name:
-          type: string 
-          minLength: 1
-          maxLength: 255
-          description: 'Фамилия пользователя.'
-        email:
-          type: string
-          pattern: ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
-          minLength: 6
-          maxLength: 255
-          description: 'Email пользователя. (pattern используется для проверки почты через регулярку)'
-      required:
-        - first_name
-        - last_name
-        - email
-      description: 'Базовые поля класса User.'
-
-    UserRegistrationDTO:
-      type: object
-      additionalProperties: false
-      properties:
-        first_name:
-          type: string
-          minLength: 1
-          maxLength: 255
-          description: 'Имя пользователя.'
-        last_name:
-          type: string 
-          minLength: 1
-          maxLength: 255
-          description: 'Фамилия пользователя.'
         email:
           type: string
           pattern: ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
@@ -54,8 +18,6 @@ components:
           description: 'Пароль пользователя. (Критерии регулярки для проверки: Хотя бы одна большая буква, одна маленькая, одна цифра, один спецсимвол из набора, длина хотя бы 8)'
 
       required:
-        - first_name
-        - last_name
         - email
         - password
 
@@ -67,19 +29,6 @@ components:
       properties:
         id:
           type: integer
-
-        first_name:
-          type: string
-          minLength: 1
-          maxLength: 255
-          description: 'Имя пользователя.'
-
-        last_name:
-          type: string 
-          minLength: 1
-          maxLength: 255
-          description: 'Фамилия пользователя.'
-
         email:
           type: string
           pattern: ^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$
@@ -89,18 +38,13 @@ components:
 
         password_hash:
           type: string
-        username:
-          type: string
         created_at:
           type: string
           format: date
       required:
         - id
-        - first_name
-        - last_name
         - email
         - password_hash
-        - username
         - created_at
 
 

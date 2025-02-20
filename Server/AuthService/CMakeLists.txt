@@ -8,9 +8,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 find_package(userver REQUIRED core postgresql chaotic)
+find_package(jwt-cpp CONFIG REQUIRED)
 
 file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
 
+file (GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp)
 
 include_directories(
     
@@ -36,9 +38,10 @@ userver_add_sql_library(
     SQL_FILES sql/*.sql
 )
 
-add_executable(${PROJECT_NAME} main.cpp src/Controllers/UserController.cpp src/Managers/UserManager.cpp src/Models/UserStorage.cpp)
+add_executable(${PROJECT_NAME} main.cpp ${CPP_FILES})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC bcrypt)
+target_link_libraries(${PROJECT_NAME} PRIVATE jwt-cpp::jwt-cpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_sql ${PROJECT_NAME}-chgen)
 

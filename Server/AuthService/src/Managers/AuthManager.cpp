@@ -1,16 +1,17 @@
-#include "Managers/UserManager.hpp"
+#include "Managers/AuthManager.hpp"
+#include "Managers/JwtManager.hpp"
 #include <userver/components/component.hpp>
 #include <bcrypt/BCrypt.hpp>
 #include <optional>
-
+#include <string>
 namespace auth_service
 {
-    UserManager::UserManager(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context) : 
-    ComponentBase(config, context), userStorage_(context.FindComponent<UserStorage>()) {}
+    AuthManager::AuthManager(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context) : 
+    ComponentBase(config, context), authRepository_(context.FindComponent<AuthRepository>()), jwtManager_(context.FindComponent<JwtManager>()) {}
 
-    bool UserManager::RegisterUser(auth_service::models::UserRegistrationDTO& user_data)
+    bool AuthManager::RegisterUser(auth_service::models::UserDTO& user_data)
     {
-        if (userStorage_.FindUserByEmail(user_data.email) != std::nullopt)
+        if (authRepository_.FindUserByEmail(user_data.email) != std::nullopt)
         {
             return false;
         }
@@ -18,9 +19,25 @@ namespace auth_service
         ValidatePassword(user_data.password);
         const std::string password_hash = HashPassword(user_data.password);
 
-        return userStorage_.CreateUser(user_data.first_name, user_data.last_name, user_data.email, password_hash);;
+        return authRepository_.CreateUser(user_data.email, password_hash);;
         
+    }
 
+    std::string AuthManager::AuthenticateUser(auth_service::models::UserDTO& user_data)
+    {
+        auto user = authRepository_.FindUserByEmail(user_data.email);
+        if (user == std::nullopt)
+        {
+            throw std::runtime_error(fmt::format("User {} not found.", user_data.email));
+        }
+
+        ValidatePassword(user_data.password);
+        
+        if (!VerifyPassword(user_data.password, user.value().password_hash))
+        {
+            throw std::runtime_error("Invalid password");
+        }
+        return jwtManager_.GenerateToken(user.value().id, user.value().email);
         
     }
 

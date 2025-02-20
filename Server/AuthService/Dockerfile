@@ -4,11 +4,17 @@ RUN sudo apt update && sudo apt install -y clang-format
 
 RUN git clone https://github.com/trusch/libbcrypt.git /tmp/libbcrypt && \
     cd /tmp/libbcrypt && \
-    mkdir build && cd build && \
-    cmake .. && \
-    make && \
-    sudo make install && \
+    cmake . && \
+    cmake --build . && \
+    sudo cmake --install . && \
     rm -rf /tmp/libbcrypt
+
+RUN git clone https://github.com/Thalhammer/jwt-cpp.git /tmp/jwt-cpp && \
+    cd /tmp/jwt-cpp && \
+    cmake . &&  cmake --build .  && \
+    sudo cmake --install . && \
+    rm -rf /tmp/jwt-cpp
+
 
 WORKDIR /app
 COPY . .
