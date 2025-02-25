@@ -9,37 +9,39 @@ namespace auth_service
     AuthManager::AuthManager(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context) : 
     ComponentBase(config, context), authRepository_(context.FindComponent<AuthRepository>()), jwtManager_(context.FindComponent<JwtManager>()) {}
 
-    bool AuthManager::RegisterUser(auth_service::models::UserDTO& user_data)
+    bool AuthManager::RegisterUser(auth_service::models::UserDTO& userData)
     {
-        if (authRepository_.FindUserByEmail(user_data.email) != std::nullopt)
+        if (authRepository_.FindUserByEmail(userData.email) != std::nullopt)
         {
             return false;
         }
 
-        ValidatePassword(user_data.password);
-        const std::string password_hash = HashPassword(user_data.password);
+        ValidatePassword(userData.password);
+        std::string passwordHash = HashPassword(userData.password);
 
-        return authRepository_.CreateUser(user_data.email, password_hash);;
+        return authRepository_.CreateUser(userData.email, passwordHash);;
         
     }
 
-    std::string AuthManager::AuthenticateUser(auth_service::models::UserDTO& user_data)
+    std::pair<std::string, std::string> AuthManager::AuthenticateUser(auth_service::models::UserDTO& userData)
     {
-        auto user = authRepository_.FindUserByEmail(user_data.email);
+        auto user = authRepository_.FindUserByEmail(userData.email);
         if (user == std::nullopt)
         {
-            throw std::runtime_error(fmt::format("User {} not found.", user_data.email));
+            throw std::runtime_error(fmt::format("User {} not found.", userData.email));
         }
 
-        ValidatePassword(user_data.password);
+        ValidatePassword(userData.password);
         
-        if (!VerifyPassword(user_data.password, user.value().password_hash))
+        if (!VerifyPassword(userData.password, user.value().password_hash))
         {
             throw std::runtime_error("Invalid password");
         }
-        return jwtManager_.GenerateToken(user.value().id, user.value().email);
+        return {jwtManager_.GenerateAccessToken(user.value().id), jwtManager_.GenerateRefreshToken(user.value().id)};
         
     }
+
+
 
 
     std::string HashPassword(const std::string& password)
@@ -59,30 +61,30 @@ namespace auth_service
             return false;
         }
 
-        bool has_upper = false;
-        bool has_lower = false;
-        bool has_digit = false;
-        bool has_special = false;
+        bool hasUpper = false;
+        bool hasLower = false;
+        bool hasDigit = false;
+        bool hasSpecial = false;
 
-        const std::string special_characters = "#?!@$%^&*-";
+        const std::string SPECIAL_CHARACTERS = "#?!@$%^&*-";
 
         for (char c : password) {
             if (std::isupper(c)) 
             {
-                has_upper = true;
+                hasUpper = true;
             } else if (std::islower(c)) 
             {
-                has_lower = true;
+                hasLower = true;
             } else if (std::isdigit(c)) 
             {
-                has_digit = true;
-            } else if (special_characters.find(c) != std::string::npos) 
+                hasDigit = true;
+            } else if (SPECIAL_CHARACTERS.find(c) != std::string::npos) 
             {
-                has_special = true;
+                hasSpecial = true;
             }
         }
 
-        return has_upper && has_lower && has_digit && has_special;
+        return hasUpper && hasLower && hasDigit && hasSpecial;
     }
     
     void ValidatePassword(const std::string& password) {

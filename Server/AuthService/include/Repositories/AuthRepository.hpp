@@ -5,7 +5,7 @@
 
 #include <userver/components/component_fwd.hpp> 
 #include <userver/storages/postgres/cluster.hpp>
-#include <userver/storages/postgres/component.hpp>
+#include <userver/components/component_base.hpp>
 
 #include <optional>
 
@@ -14,7 +14,7 @@ namespace auth_service
     class AuthRepository final : public userver::components::ComponentBase
     {
         public:
-            static constexpr std::string_view kName = "auth-storage";
+            static constexpr std::string_view kName = "auth-repository";
 
             AuthRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 

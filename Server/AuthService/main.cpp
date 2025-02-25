@@ -11,14 +11,15 @@
 
 int main(int argc, char *argv[]) {
 
-  auto component_list = userver::components::MinimalServerComponentList()
+  auto componentList = userver::components::MinimalServerComponentList()
                             .Append<userver::components::TestsuiteSupport>()
                             .Append<userver::clients::dns::Component>()
+                            .Append<auth_service::JwtRepository>()
                             .Append<auth_service::JwtManager>()
                             .Append<auth_service::AuthRepository>()
                             .Append<auth_service::AuthManager>()
                             .Append<userver::components::Postgres>("auth-db");
-    auth_service::AddAuthController(component_list);
+    auth_service::AddAuthController(componentList);
 
-  return userver::utils::DaemonMain(argc, argv, component_list);
+  return userver::utils::DaemonMain(argc, argv, componentList);
 }

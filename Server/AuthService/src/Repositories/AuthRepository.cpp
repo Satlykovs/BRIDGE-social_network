@@ -17,7 +17,7 @@ namespace auth_service
         const userver::components::ComponentContext& context) : ComponentBase(config, context), 
         pgCluster_(context.FindComponent<userver::components::Postgres>("auth-db").GetCluster()) 
         {
-            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateTable);
+            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateTableUsers);
         }
         
 
@@ -32,9 +32,9 @@ namespace auth_service
             return std::nullopt;
         }
 
-        bool AuthRepository::CreateUser(const std::string& email, const std::string& password_hash)
+        bool AuthRepository::CreateUser(const std::string& email, const std::string& passwordHash)
         {
-            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateUser, email, password_hash);
+            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateUser, email, passwordHash);
 
             return true;
         }

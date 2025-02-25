@@ -1,0 +1,1 @@
+CREATE INDEX token_idx ON refresh_tokens (token, expires_at);

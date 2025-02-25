@@ -14,11 +14,13 @@ components_manager:
       connlimit_mode: manual
 
     auth-manager: {}
-    auth-storage: {}
+    auth-repository: {}
+    jwt-repository: {}
     
     jwt-manager:
       secret-key: $secret-key 
-      token-lifetime: $token-lifetime
+      access-token-lifetime: $access-token-lifetime
+      refresh-token-lifetime: $refresh-token-lifetime
     
 
     testsuite-support: {}
@@ -32,6 +34,10 @@ components_manager:
       task_processor: main-task-processor
     login-handler:
       path: /auth/login
+      method: POST
+      task_processor: main-task-processor
+    refresh-handler:
+      path: /auth/refresh
       method: POST
       task_processor: main-task-processor
     logging:  

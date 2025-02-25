@@ -18,7 +18,9 @@ namespace auth_service
 
             bool RegisterUser(auth_service::models::UserDTO& user_data);
 
-            std::string AuthenticateUser(auth_service::models::UserDTO& user_data);
+            std::pair<std::string, std::string> AuthenticateUser(auth_service::models::UserDTO& user_data);
+
+            std::pair<std::string, std::string> RefreshUserTokens(const std::string& refreshToken);
 
         private:
             auth_service::AuthRepository& authRepository_;

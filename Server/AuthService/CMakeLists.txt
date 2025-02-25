@@ -5,7 +5,7 @@ project(auth_service)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
+#set(CMAKE_CXX_CLANG_TIDY clang-tidy) #Не собирается в докере с этим
 
 find_package(userver REQUIRED core postgresql chaotic)
 find_package(jwt-cpp CONFIG REQUIRED)

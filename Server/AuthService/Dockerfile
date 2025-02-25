@@ -1,6 +1,6 @@
 FROM ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
 
-RUN sudo apt update && sudo apt install -y clang-format
+RUN sudo apt update && sudo apt install -y clang-format clang-tidy
 
 RUN git clone https://github.com/trusch/libbcrypt.git /tmp/libbcrypt && \
     cd /tmp/libbcrypt && \

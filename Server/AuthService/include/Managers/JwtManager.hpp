@@ -9,6 +9,7 @@
 #include <string>
 #include <chrono>
 #include "Models/JwtPayload.hpp"
+#include  "Repositories/JwtRepository.hpp"
 namespace auth_service
 {
 
@@ -20,16 +21,22 @@ public:
     JwtManager(const userver::components::ComponentConfig& config, 
                 const userver::components::ComponentContext& context);
     
-    std::string GenerateToken(int user_id, const std::string& email) const;
+    std::string GenerateAccessToken(int userId) const;
+    std::string GenerateRefreshToken(int userId) const;
 
-    std::optional<JwtPayload> VerifyToken(const std::string& token) const; //Note: Should be removed to Gateway in future
+    std::pair<std::string, std::string> RefreshTokens(const std::string& refreshToken);
+
+    std::optional<JwtPayload> VerifyAccessToken(const std::string& token) const; //Note: Should be removed to Gateway in future
 	
 	static userver::yaml_config::Schema GetStaticConfigSchema();
     
 
 private:
         std::string secretKey_;
-        std::chrono::hours tokenLifetime_;
+        std::chrono::minutes accessTokenLifetime_;
+        std::chrono::hours refreshTokenLifetime_;
+
+        JwtRepository& jwtRepository_;
 
     
 };

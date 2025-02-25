@@ -4,5 +4,5 @@ logger-level: info
 worker-threads: 4
 worker-fs-threads: 4
 
-
-token-lifetime: 24
+access-token-lifetime: 10
+refresh-token-lifetime: 720
