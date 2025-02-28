@@ -11,7 +11,9 @@ components_manager:
       blocking_task_processor: fs-task-processor
       dns_resolver: async
       sync-start: true
-      connlimit_mode: manual
+      connlimit_mode: auto
+      min_pool_size: 50 
+      max_queue_size: 10000    
 
     auth-manager: {}
     auth-repository: {}
