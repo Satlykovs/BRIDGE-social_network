@@ -1,8 +1,0 @@
-server-port: 8080
-db-path: "postgresql://user:password@auth-db:5432/mydatabase"
-logger-level: info
-worker-threads: 4
-worker-fs-threads: 4
-
-access-token-lifetime: 10
-refresh-token-lifetime: 720
