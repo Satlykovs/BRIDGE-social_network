@@ -4,14 +4,15 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: authdatabase
     hostname: auth-db
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      test: ["CMD-SHELL", "pg_isready -U user -d authdatabase"]
       interval: 5s
       timeout: 5s
       retries: 5
     volumes:
+      - ./sql/init-scripts:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
 
   auth_service:

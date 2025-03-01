@@ -35,7 +35,7 @@ userver_add_sql_library(
     ${PROJECT_NAME}_sql
     NAMESPACE sql_queries
     OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/sql
-    SQL_FILES sql/*.sql
+    SQL_FILES sql/**.sql
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${CPP_FILES})

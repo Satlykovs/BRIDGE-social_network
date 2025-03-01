@@ -17,7 +17,6 @@ namespace auth_service
         const userver::components::ComponentContext& context) : ComponentBase(config, context), 
         pgCluster_(context.FindComponent<userver::components::Postgres>("auth-db").GetCluster()) 
         {
-            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateTableUsers);
         }
         
 

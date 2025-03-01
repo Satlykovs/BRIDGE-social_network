@@ -28,25 +28,18 @@ namespace auth_service
 		try
 		{
 			bool result = authManager_.RegisterUser(userData);
-			if (result)
-			{
+
 				return userver::formats::json::MakeObject(
 					"message", fmt::format("User '{}' registered successfully",
 										   userData.email));
-			}
-			else
-			{
-				throw userver::server::handlers::ClientError(
-					userver::server::handlers::ExternalBody{
-						fmt::format("User with email '{}' already exists",
-									userData.email)});
-			}
+			
 		}
 		catch (const std::exception& e)
 		{
 			throw userver::server::handlers::ClientError(
 				userver::server::handlers::ExternalBody{
-					fmt::format("Registration failed: {}", e.what())});
+					fmt::format("User with email '{}' already exists",
+								userData.email)});
 		}
 	}
 
@@ -68,10 +61,12 @@ namespace auth_service
 		{
 			std::pair<std::string, std::string> tokens = authManager_.AuthenticateUser(userData);
 
-			userver::formats::json::ValueBuilder valueBuilder;
-			valueBuilder["access-token"] = tokens.first;
-			valueBuilder["refresh-token"] = tokens.second;
-			return valueBuilder.ExtractValue();
+			auto& response = request.GetHttpResponse();
+			response.SetHeader(std::string_view("Authorization"), "Bearer " + tokens.first);
+			response.SetHeader(std::string_view("X-Refresh-Token"), tokens.second);
+			response.SetStatus(userver::server::http::HttpStatus::kOk);
+
+			return {};
 		}
 		catch (const std::exception& e)
 		{
@@ -97,6 +92,10 @@ namespace auth_service
 	{
 		std::string refreshToken = request.GetHeader("X-Refresh-Token");
 
+		if (refreshToken == "")
+		{
+			throw userver::server::handlers::ClientError(userver::server::handlers::ExternalBody{"TOKEN_NOT_FOUND"});
+		}
 
 		try
 		{

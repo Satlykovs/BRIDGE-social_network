@@ -6,13 +6,17 @@ components_manager:
       listener:
         port: $server-port
         task_processor: main-task-processor
+    secdist: {}
+    default-secdist-provider:
+      config: $secdist-path
     auth-db:
-      dbconnection: $db-path 
+      dbalias: auth-db
       blocking_task_processor: fs-task-processor
       dns_resolver: async
       sync-start: true
       connlimit_mode: auto
-      min_pool_size: 50 
+      min_pool_size: 50
+      max_pool_size: 1000
       max_queue_size: 10000    
 
     auth-manager: {}

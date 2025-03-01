@@ -3,6 +3,8 @@
 #include <userver/storages/postgres/component.hpp>
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
+#include <userver/storages/secdist/component.hpp>
+#include <userver/storages/secdist/provider_component.hpp>
 
 #include "Controllers/AuthController.hpp"
 #include "Managers/AuthManager.hpp"
@@ -14,10 +16,12 @@ int main(int argc, char *argv[]) {
   auto componentList = userver::components::MinimalServerComponentList()
                             .Append<userver::components::TestsuiteSupport>()
                             .Append<userver::clients::dns::Component>()
-                            .Append<auth_service::JwtRepository>()
-                            .Append<auth_service::JwtManager>()
                             .Append<auth_service::AuthRepository>()
                             .Append<auth_service::AuthManager>()
+                            .Append<auth_service::JwtRepository>()
+                            .Append<auth_service::JwtManager>()
+                            .Append<userver::components::Secdist>()
+                            .Append<userver::components::DefaultSecdistProvider>()
                             .Append<userver::components::Postgres>("auth-db");
     auth_service::AddAuthController(componentList);
 
