@@ -1,0 +1,60 @@
+components:
+  schemas:
+
+    FriendListDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        currentUserID:
+          type: integer
+          description: 'ID текущего пользователя'
+        friendListType:
+          type: string
+          enum:
+            - "CurrentFriendsList"
+            - "ReceivedFriendRequestsList"
+            - "SentFriendRequestsList"
+          description: |
+            Тип списка:
+            - CurrentFriendsList — текущие друзья
+            - ReceivedFriendRequestsList — входящие заявки
+            - SentFriendRequestsList — исходящие заявки
+      required:
+        - currentUserID
+        - friendListType
+      description: 'Фильтр для получения разных типов списка дружбы'
+
+    DecisionFriendRequestDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        senderID:
+          type: integer
+          description: 'ID of the sender of the friend request'
+        currentUserID:
+          type: integer
+          description: 'ID of the receiver of the friend request'
+        decision:
+          type: boolean
+          description: 'decision on friendship request'
+      required:
+        - senderID
+        - currentUserID
+        - decision
+      description: 'DTO для принятия/отклонения запроса в друзья'
+    
+    FriendToActionDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        currentUserID:
+          type: integer
+          description: 'user ID'
+        friendToActionID:
+          type: integer
+          description: 'user ID to action'
+      required:
+        - currentUserID
+        - friendToActionID
+      description: 'DTO которая нужна для получения id пользователя и пользователя, с которым надо что-то сделать'
+
