@@ -19,34 +19,36 @@ JwtManager::JwtManager(const userver::components::ComponentConfig &config,
         LOG_INFO() << "JwtManager initialized with token lifetime: " << accessTokenLifetime_.count() << " minutes";
     }
 
-std::string JwtManager::GenerateAccessToken(int userId) const
+
+
+std::string JwtManager::CreateToken(int userId, std::chrono::system_clock::time_point expTime) const
 {
     return jwt::create()
     .set_issuer("auth-service")
     .set_audience("Qt-client")
     .set_subject(std::to_string(userId))
     .set_type("JWT")
-    .set_expires_at(std::chrono::system_clock::now() + accessTokenLifetime_)
+    .set_expires_at(expTime)
     .sign(jwt::algorithm::hs256{secretKey_});
+}
+
+std::string JwtManager::GenerateAccessToken(int userId) const
+{
+    return CreateToken(userId, std::chrono::system_clock::now() + accessTokenLifetime_);
 }
 
 std::string JwtManager::GenerateRefreshToken(int userId) const
 {
-    auto expTime = userver::storages::postgres::TimePointWithoutTz(std::chrono::system_clock::now() + refreshTokenLifetime_);
-    std::string token = jwt::create()
-    .set_issuer("auth-service")
-    .set_audience("Qt-client")
-    .set_subject(std::to_string(userId))
-    .set_expires_at(expTime)
-    .sign(jwt::algorithm::hs256{secretKey_});
+    auto expTime = std::chrono::system_clock::now() + refreshTokenLifetime_;
+    std::string token = CreateToken(userId, expTime);
 
-    jwtRepository_.AddRefreshToken(userId, token, expTime);
+    jwtRepository_.AddRefreshToken(userId, token, userver::storages::postgres::TimePointWithoutTz(expTime));
 
     return token;
 
 }
 
-std::optional<JwtPayload> JwtManager::VerifyAccessToken(const std::string& token) const
+bool JwtManager::VerifyToken(const std::string& token) const
 {
     try
     {
@@ -58,22 +60,23 @@ std::optional<JwtPayload> JwtManager::VerifyAccessToken(const std::string& token
                             .with_audience("Qt-client")
                             .leeway(0);
         verifier.verify(decodedToken);
-
-        JwtPayload payload;
-        payload.email = decodedToken.get_payload_claim("email").as_string();
-
-        return payload;
+        return true;
     }
     catch (const std::exception& e)
     {
         LOG_ERROR() << "Error verifying token: " << e.what();
-        return std::nullopt;
+        return false;
     }
 }
 
 
 std::pair<std::string, std::string> JwtManager::RefreshTokens(const std::string& refreshToken)
 {
+    if (!VerifyToken(refreshToken))
+    {
+        throw std::runtime_error("INVALID_TOKEN");
+    }
+
     if (!jwtRepository_.CheckRefreshToken(refreshToken))
     {
         jwtRepository_.DeleteRefreshToken(refreshToken);

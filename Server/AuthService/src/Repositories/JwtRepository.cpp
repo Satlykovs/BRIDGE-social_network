@@ -14,7 +14,7 @@ namespace auth_service
 
         }
 
-    void JwtRepository::AddRefreshToken(int userId, const std::string& token, userver::storages::postgres::TimePointWithoutTz& expTime)
+    void JwtRepository::AddRefreshToken(int userId, const std::string& token, userver::storages::postgres::TimePointWithoutTz expTime)
     {
         pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kAddRefreshToken, userId, token, expTime);
     }

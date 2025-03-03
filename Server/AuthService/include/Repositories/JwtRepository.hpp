@@ -14,7 +14,7 @@ namespace auth_service
 
             JwtRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 
-            void AddRefreshToken(int userId, const std::string& token, userver::storages::postgres::TimePointWithoutTz& expTime);
+            void AddRefreshToken(int userId, const std::string& token, userver::storages::postgres::TimePointWithoutTz expTime);
             bool CheckRefreshToken(const std::string& token) const;
             void DeleteRefreshToken(const std::string& token);
 
