@@ -10,10 +10,6 @@ components:
           description: 'ID текущего пользователя'
         friendListType:
           type: string
-          enum:
-            - "CurrentFriendsList"
-            - "ReceivedFriendRequestsList"
-            - "SentFriendRequestsList"
           description: |
             Тип списка:
             - CurrentFriendsList — текущие друзья

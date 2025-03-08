@@ -11,35 +11,33 @@
 
 
 
-namespace friendship_servive
+namespace friendship_service
 {
 
     FriendshipRepository::FriendshipRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context):
-    ConponentBase(config,context), pgCluster_(context.FindComponent<userver::components::Postgres>("friendship-db").GetCluster()){
+    ComponentBase(config,context), pgCluster_(context.FindComponent<userver::components::Postgres>("friendship-db").GetCluster()){
         pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster,sql_queries::sql::kCreateTable);
     }
 
     userver::storages::postgres::ResultSet FriendshipRepository::GetFriendsListQuery(int currentUserID, const std::string& friendListType){
         
-        switch (friendListType)
-        {
-        case "CurrentFriendsList":
+        if(friendListType == "CurrentFriendsList")
             {
                 return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kGetCurrentFriends, currentUserID);
             }
-        case "ReceivedFriendRequestsList":
+        else if(friendListType == "ReceivedFriendRequestsList")
             {
                 return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kGetReceivedFriendRequests, currentUserID);
             }
-        case "SentFriendRequestsList":
+        else if(friendListType == "SentFriendRequestsList")
             {
                 return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kGetSentFriendRequests, currentUserID);
             }
-        default:
+        else
             {
                 throw std::invalid_argument(fmt::format("Invalid friend list type: {}", friendListType));
             }
-        }
+        
     }
     
 
@@ -61,7 +59,7 @@ namespace friendship_servive
     }
 
 
-    userver::storages::postgres::ResultSet SendFriendshipRequestQuery(int currentUserID, int receiverID){
+    userver::storages::postgres::ResultSet FriendshipRepository::SendFriendshipRequestQuery(int currentUserID, int receiverID){
 
         return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kSendFriendshipRequest, currentUserID, receiverID);
     }
@@ -69,21 +67,15 @@ namespace friendship_servive
 
     userver::storages::postgres::ResultSet FriendshipRepository::UpdateFriendRequestStatusQuery(int currentUserID, int senderID , bool decision){
 
-        switch (decision)
-        {
-        case true:
+        if(decision)
             {
                 return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kUpdateFriendRequestStatus, currentUserID, senderID, "accepted");
             }
-        case false:
+        else
             {
-                return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kDeleteFriendshipRelation, currentUserID, senderID);
+                return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kRevokeFriendshipRequest, senderID, currentUserID);
             }
-        default:
-            {
-                throw std::invalid_argument(fmt::format("Invalid decision type: {}", decision));
-            }
-        }
+        
     }
 
 

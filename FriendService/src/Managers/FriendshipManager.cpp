@@ -1,4 +1,5 @@
 #include "Managers/FriendshipManager.hpp"
+#include "Repositories/FriendshipRepository.hpp"
 #include <userver/storages/postgres/result_set.hpp>
 #include <userver/formats/json/value_builder.hpp>
 #include <string>
@@ -17,7 +18,7 @@ namespace friendship_service
 
     userver::formats::json::Value FriendshipManager::TryBuildFriendsListResponse(const friendship_service::models::FriendListDTO& user_data){
         int currentUserID = user_data.currentUserID;
-        std::string friendListType = user_data.friendListType.ToString();
+        std::string friendListType = user_data.friendListType;
 
         userver::storages::postgres::ResultSet result = FriendshipRepository_.GetFriendsListQuery(currentUserID, friendListType);
 
@@ -45,9 +46,9 @@ namespace friendship_service
             builder["friendship_status"] = "It is possible to send a friend request.";
             return builder.ExtractValue();
         }
-        else{
-            std::string status = result[0]["status"].As<std::string>();
-        }
+        
+        std::string status = result[0]["status"].As<std::string>();
+        
 
         int senderID = result[0]["sender_id"].As<int>();
 
@@ -57,7 +58,7 @@ namespace friendship_service
         else if (status == "sent" && currentUserID == senderID){
             builder["friendship_status"] = "Friend request sent. It is possible to revoke a friendship request.";
         }
-        else if (status = "sent" && currentUserID != senderID){
+        else if (status == "sent" && currentUserID != senderID){
             builder["friendship_status"] = "Friend request received. It is possible to make a decision about the friend request";
         }
         else{
@@ -112,11 +113,11 @@ namespace friendship_service
     }
 
 
-    userver::formats::json::Value TrySendFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data){
+    userver::formats::json::Value FriendshipManager::TrySendFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data){
         int currentUserID = user_data.currentUserID;
         int receiverID = user_data.friendToActionID;
 
-        userver::storages::postgres::ResultSet currentFriendshipRelationStatus = FriendshipRepository_.FriendshipStatusQuery();
+        userver::storages::postgres::ResultSet currentFriendshipRelationStatus = FriendshipRepository_.FriendshipStatusQuery(currentUserID, receiverID);
 
 
         userver::formats::json::ValueBuilder builder;
@@ -129,19 +130,19 @@ namespace friendship_service
                 return builder.ExtractValue();
             }
             else{
-                throw std::runtime_error("Unexpected number of added friend requests!")
+                throw std::runtime_error("Unexpected number of added friend requests!");
             }
         }
         else if(currentFriendshipRelationStatus[0]["status"].As<std::string>() == "accepted"){
             builder["sending_status"] = "This user is already your friend!";
             return builder.ExtractValue();
         }
-        else if(currentUserID == currentFriendshipRelationStatus[0]["sender_id"]){
+        else if(currentUserID == currentFriendshipRelationStatus[0]["sender_id"].As<int>()){
             builder["sending_status"] = "Friend request has already been sent!";
             return builder.ExtractValue();
         }
-        else if(currentUserID == currentFriendRelationStatus[0]["receiver_id"]){
-            FriendshipRepository_.UpdateFriendRequestStatusQuery(currentUserID, currentFriendshipRelationStatus[0]["sender_id"], true);
+        else if(currentUserID == currentFriendshipRelationStatus[0]["receiver_id"].As<int>()){
+            FriendshipRepository_.UpdateFriendRequestStatusQuery(currentUserID, currentFriendshipRelationStatus[0]["sender_id"].As<int>(), true);
             builder["sending_status"] = "Friend request was successfully accepted";
             return builder.ExtractValue();
         }
