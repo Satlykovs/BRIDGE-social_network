@@ -16,7 +16,7 @@ namespace friendship_service
 
     FriendshipRepository::FriendshipRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context):
     ComponentBase(config,context), pgCluster_(context.FindComponent<userver::components::Postgres>("friendship-db").GetCluster()){
-        pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster,sql_queries::sql::kCreateTable);
+        //pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster,sql_queries::sql::kCreateTable);
     }
 
     userver::storages::postgres::ResultSet FriendshipRepository::GetFriendsListQuery(int currentUserID, const std::string& friendListType){

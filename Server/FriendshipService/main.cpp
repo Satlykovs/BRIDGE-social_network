@@ -3,7 +3,6 @@
 #include <userver/storages/postgres/component.hpp>
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
-
 #include "Controllers/FriendshipController.hpp"
 #include "Managers/FriendshipManager.hpp"
 #include "Repositories/FriendshipRepository.hpp"
