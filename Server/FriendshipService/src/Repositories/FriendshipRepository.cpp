@@ -69,7 +69,7 @@ namespace friendship_service
 
         if(decision)
             {
-                return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kUpdateFriendRequestStatus, currentUserID, senderID, "accepted");
+                return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kUpdateFriendRequestStatus, currentUserID, senderID);
             }
         else
             {

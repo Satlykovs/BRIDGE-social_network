@@ -111,8 +111,10 @@ namespace friendship_service{
         try{
             return FriendshipManager_.TrySendFriendshipRequest(user_data);
         }
+        catch(const std::invalid_argument& e){
+            throw userver::server::handlers::ClientError(userver::server::handlers::ExternalBody{fmt::format("Failed while sending friend request: {}", e.what())});
+        }
         catch(const std::exception& e){
-            LOG_INFO() << e.what();
             throw userver::server::handlers::InternalServerError(userver::server::handlers::ExternalBody{fmt::format("Failed while sending friend request: {}", e.what())});
         }
     }

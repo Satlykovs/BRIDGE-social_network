@@ -117,8 +117,11 @@ namespace friendship_service
         int currentUserID = user_data.currentUserID;
         int receiverID = user_data.friendToActionID;
 
+        if (currentUserID==receiverID){
+            throw std::invalid_argument("It is not possible to send a friend request to yourself");
+        }
+        
         userver::storages::postgres::ResultSet currentFriendshipRelationStatus = FriendshipRepository_.FriendshipStatusQuery(currentUserID, receiverID);
-
 
         userver::formats::json::ValueBuilder builder;
         builder["user_id"] = currentUserID;

@@ -1,1 +1,0 @@
-CREATE TYPE status_enum AS ENUM ('accepted','sent');
