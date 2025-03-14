@@ -9,7 +9,7 @@ namespace auth_service::repositories
 {
     JwtRepository::JwtRepository(const userver::components::ComponentConfig& config,
          const userver::components::ComponentContext& context) : ComponentBase(config, context),
-         pgCluster_(context.FindComponent<userver::components::Postgres>("auth-db").GetCluster()) 
+         pgCluster_(context.FindComponent<userver::components::Postgres>("user-db").GetCluster()) 
         {
 
         }

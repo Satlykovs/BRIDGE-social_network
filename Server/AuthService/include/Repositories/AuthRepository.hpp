@@ -18,7 +18,7 @@ namespace auth_service::repositories
             AuthRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 
             std::optional<auth_service::models::User> FindUserByEmail(const std::string& email);
-            userver::storages::postgres::Transaction CreateUser(const std::string& email, const std::string& password_hash, int& id);
+            void CreateUser(const std::string& email, const std::string& password_hash);
 
             
 

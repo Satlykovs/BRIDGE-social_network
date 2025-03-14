@@ -15,7 +15,7 @@ namespace auth_service::repositories
 {
     AuthRepository::AuthRepository(const userver::components::ComponentConfig& config,
         const userver::components::ComponentContext& context) : ComponentBase(config, context), 
-        pgCluster_(context.FindComponent<userver::components::Postgres>("auth-db").GetCluster()) 
+        pgCluster_(context.FindComponent<userver::components::Postgres>("user-db").GetCluster()) 
         {
         }
         
@@ -31,12 +31,15 @@ namespace auth_service::repositories
             return std::nullopt;
         }
 
-        userver::storages::postgres::Transaction AuthRepository::CreateUser(const std::string& email, const std::string& passwordHash, int& id)
+        void AuthRepository::CreateUser(const std::string& email, const std::string& passwordHash)
         {
             auto trx = pgCluster_->Begin(userver::storages::postgres::Transaction::RW);
-            id = trx.Execute(
-                 sql_queries::sql::kCreateUser, email, passwordHash).AsSingleRow<int>();
-            return trx;
+            int id = trx.Execute(sql_queries::sql::kCreateUser, email, passwordHash).AsSingleRow<int>();
+
+            trx.Execute("INSERT INTO user_profile(user_id, email) VALUES($1, $2)", id, email);
+
+            trx.Commit();
+            
 
         }
 

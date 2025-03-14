@@ -3,7 +3,7 @@
 
 #include "Repositories/AuthRepository.hpp"
 #include "Managers/JwtManager.hpp"
-#include "Managers/KafkaProducer.hpp"
+// #include "Managers/KafkaProducer.hpp"
 #include <userver/components/component_fwd.hpp>
 #include <bcrypt/BCrypt.hpp>
 #include <optional>
@@ -27,7 +27,7 @@ namespace auth_service::managers
         private:
             auth_service::repositories::AuthRepository& authRepository_;
             auth_service::managers::JwtManager& jwtManager_;
-            auth_service::managers::Producer& kafkaProducer_;
+            //auth_service::managers::Producer& kafkaProducer_;
     };
 
     std::string HashPassword(const std::string& password);

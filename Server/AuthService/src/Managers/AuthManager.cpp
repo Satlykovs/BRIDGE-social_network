@@ -1,6 +1,6 @@
 #include "Managers/AuthManager.hpp"
 #include "Managers/JwtManager.hpp"
-#include "Managers/KafkaProducer.hpp"
+// #include "Managers/KafkaProducer.hpp"
 
 #include <userver/components/component.hpp>
 #include <userver/utils/optionals.hpp>
@@ -11,8 +11,9 @@ namespace auth_service::managers
 {
     AuthManager::AuthManager(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context) : 
     ComponentBase(config, context), authRepository_(context.FindComponent<auth_service::repositories::AuthRepository>()),
-     jwtManager_(context.FindComponent<auth_service::managers::JwtManager>()),
-     kafkaProducer_(context.FindComponent<auth_service::managers::Producer>()) {}
+     jwtManager_(context.FindComponent<auth_service::managers::JwtManager>())
+     //kafkaProducer_(context.FindComponent<auth_service::managers::Producer>()) 
+     {}
 
     void AuthManager::RegisterUser(auth_service::models::UserDTO& userData)
     {
@@ -23,23 +24,7 @@ namespace auth_service::managers
         ValidatePassword(userData.password);
         std::string passwordHash = HashPassword(userData.password);
         
-        int id = -1;
-        auto trx = authRepository_.CreateUser(userData.email, passwordHash, id);
-
-        auth_service::models::RequestMessage msg{"user_reg", std::to_string(id), userData.email};
-        auto res = kafkaProducer_.Produce(msg);
-        if (res != auth_service::models::SendStatus::kSuccess)
-        {
-            LOG_ERROR() << "Kafka send failed: ";
-            trx.Rollback();
-            throw std::runtime_error("SERVER_ERROR"); //Переделать в дальнейшем. 
-        }
-        trx.Commit();
-        
-
-
-
-
+        authRepository_.CreateUser(userData.email, passwordHash);
         
     }
 
