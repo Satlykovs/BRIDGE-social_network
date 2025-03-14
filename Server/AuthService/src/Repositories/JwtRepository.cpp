@@ -5,7 +5,7 @@
 #include <userver/components/component.hpp>
 
 
-namespace auth_service
+namespace auth_service::repositories
 {
     JwtRepository::JwtRepository(const userver::components::ComponentConfig& config,
          const userver::components::ComponentContext& context) : ComponentBase(config, context),

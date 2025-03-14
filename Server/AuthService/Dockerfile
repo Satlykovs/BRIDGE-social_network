@@ -19,7 +19,7 @@ RUN git clone https://github.com/Thalhammer/jwt-cpp.git /tmp/jwt-cpp && \
 WORKDIR /app
 COPY . .
 
-RUN cmake -B build && cd build &&\
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release && cd build &&\
     cmake --build . -- -j$(nproc) && cd ..
 
 

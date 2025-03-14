@@ -8,13 +8,13 @@
 
 #include "schemas/User.hpp"
 
-namespace auth_service
+namespace auth_service::controllers
 {
 	RegisterHandler::RegisterHandler(
 		const userver::components::ComponentConfig& config,
 		const userver::components::ComponentContext& context)
 		: HttpHandlerJsonBase(config, context),
-		  authManager_(context.FindComponent<AuthManager>())
+		  authManager_(context.FindComponent<auth_service::managers::AuthManager>())
 	{
 	}
 
@@ -27,7 +27,7 @@ namespace auth_service
 
 		try
 		{
-			bool result = authManager_.RegisterUser(userData);
+			authManager_.RegisterUser(userData);
 
 				return userver::formats::json::MakeObject(
 					"message", fmt::format("User '{}' registered successfully",
@@ -38,7 +38,7 @@ namespace auth_service
 		{
 			throw userver::server::handlers::ClientError(
 				userver::server::handlers::ExternalBody{
-					fmt::format("User with email '{}' already exists",
+					fmt::format("User with email '{}' already exists or something else went wrong",
 								userData.email)});
 		}
 	}
@@ -47,7 +47,7 @@ namespace auth_service
 		const userver::components::ComponentConfig& config,
 		const userver::components::ComponentContext& context)
 		: HttpHandlerJsonBase(config, context),
-		  authManager_(context.FindComponent<AuthManager>())
+		  authManager_(context.FindComponent<auth_service::managers::AuthManager>())
 	{
 	}
 
@@ -81,7 +81,7 @@ namespace auth_service
 	RefreshHandler::RefreshHandler(const userver::components::ComponentConfig& config,
 		const userver::components::ComponentContext& context)
 		: HttpHandlerJsonBase(config, context),
-		  jwtManager_(context.FindComponent<JwtManager>())
+		  jwtManager_(context.FindComponent<auth_service::managers::JwtManager>())
 	{
 	}
 

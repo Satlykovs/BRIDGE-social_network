@@ -6,9 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #set(CMAKE_CXX_CLANG_TIDY clang-tidy) #Не собирается в докере с этим
-
-find_package(userver REQUIRED core postgresql chaotic)
+find_package(userver REQUIRED core postgresql chaotic kafka)
 find_package(jwt-cpp CONFIG REQUIRED)
+find_package(Boost REQUIRED COMPONENTS regex)
 
 file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
 
@@ -46,7 +46,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE jwt-cpp::jwt-cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_sql ${PROJECT_NAME}-chgen)
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql userver::chaotic)
+target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql userver::chaotic userver::kafka)
 
 find_package(ICU REQUIRED COMPONENTS uc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc)
+

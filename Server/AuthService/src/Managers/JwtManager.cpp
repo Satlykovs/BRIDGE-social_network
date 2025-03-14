@@ -3,10 +3,11 @@
 #include <userver/components/component.hpp>
 #include <userver/yaml_config/merge_schemas.hpp>
 #include <userver/logging/log.hpp>
+#include <userver/utils/optionals.hpp>
 #include <chrono>
 
 
-namespace auth_service
+namespace auth_service::managers
 {
 
 JwtManager::JwtManager(const userver::components::ComponentConfig &config,
@@ -14,7 +15,7 @@ JwtManager::JwtManager(const userver::components::ComponentConfig &config,
     secretKey_(config["secret-key"].As<std::string>()),
     accessTokenLifetime_(config["access-token-lifetime"].As<int>()),
     refreshTokenLifetime_(config["refresh-token-lifetime"].As<int>()),
-    jwtRepository_(context.FindComponent<JwtRepository>())
+    jwtRepository_(context.FindComponent<auth_service::repositories::JwtRepository>())
     {
         LOG_INFO() << "JwtManager initialized with token lifetime: " << accessTokenLifetime_.count() << " minutes";
     }
@@ -76,7 +77,7 @@ std::pair<std::string, std::string> JwtManager::RefreshTokens(const std::string&
     {
         throw std::runtime_error("INVALID_TOKEN");
     }
-
+    
     if (!jwtRepository_.CheckRefreshToken(refreshToken))
     {
         jwtRepository_.DeleteRefreshToken(refreshToken);

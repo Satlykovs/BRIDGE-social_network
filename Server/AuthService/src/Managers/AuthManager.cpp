@@ -1,25 +1,45 @@
 #include "Managers/AuthManager.hpp"
 #include "Managers/JwtManager.hpp"
+#include "Managers/KafkaProducer.hpp"
+
 #include <userver/components/component.hpp>
+#include <userver/utils/optionals.hpp>
 #include <bcrypt/BCrypt.hpp>
 #include <optional>
 #include <string>
-namespace auth_service
+namespace auth_service::managers
 {
     AuthManager::AuthManager(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context) : 
-    ComponentBase(config, context), authRepository_(context.FindComponent<AuthRepository>()), jwtManager_(context.FindComponent<JwtManager>()) {}
+    ComponentBase(config, context), authRepository_(context.FindComponent<auth_service::repositories::AuthRepository>()),
+     jwtManager_(context.FindComponent<auth_service::managers::JwtManager>()),
+     kafkaProducer_(context.FindComponent<auth_service::managers::Producer>()) {}
 
-    bool AuthManager::RegisterUser(auth_service::models::UserDTO& userData)
+    void AuthManager::RegisterUser(auth_service::models::UserDTO& userData)
     {
         if (authRepository_.FindUserByEmail(userData.email) != std::nullopt)
         {
-            return false;
+            throw std::runtime_error("USER EXISTS");
         }
-
         ValidatePassword(userData.password);
         std::string passwordHash = HashPassword(userData.password);
+        
+        int id = -1;
+        auto trx = authRepository_.CreateUser(userData.email, passwordHash, id);
 
-        return authRepository_.CreateUser(userData.email, passwordHash);;
+        auth_service::models::RequestMessage msg{"user_reg", std::to_string(id), userData.email};
+        auto res = kafkaProducer_.Produce(msg);
+        if (res != auth_service::models::SendStatus::kSuccess)
+        {
+            LOG_ERROR() << "Kafka send failed: ";
+            trx.Rollback();
+            throw std::runtime_error("SERVER_ERROR"); //Переделать в дальнейшем. 
+        }
+        trx.Commit();
+        
+
+
+
+
         
     }
 
@@ -37,7 +57,8 @@ namespace auth_service
         {
             throw std::runtime_error("Invalid password");
         }
-        return {jwtManager_.GenerateAccessToken(user.value().id), jwtManager_.GenerateRefreshToken(user.value().id)};
+        return {jwtManager_.GenerateAccessToken(user.value().id),
+             jwtManager_.GenerateRefreshToken(user.value().id)};
         
     }
 
@@ -72,13 +93,16 @@ namespace auth_service
             if (std::isupper(c)) 
             {
                 hasUpper = true;
-            } else if (std::islower(c)) 
+            } 
+            else if (std::islower(c)) 
             {
                 hasLower = true;
-            } else if (std::isdigit(c)) 
+            } 
+            else if (std::isdigit(c)) 
             {
                 hasDigit = true;
-            } else if (SPECIAL_CHARACTERS.find(c) != std::string::npos) 
+            } 
+            else if (SPECIAL_CHARACTERS.find(c) != std::string::npos) 
             {
                 hasSpecial = true;
             }

@@ -5,7 +5,8 @@
 #include <userver/storages/postgres/cluster.hpp>
 #include <userver/components/component_base.hpp>
 #include <userver/storages/postgres/io/chrono.hpp>
-namespace auth_service
+
+namespace auth_service::repositories
 {
     class JwtRepository final : public userver::components::ComponentBase
     {

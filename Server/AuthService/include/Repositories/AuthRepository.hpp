@@ -6,10 +6,9 @@
 #include <userver/components/component_fwd.hpp> 
 #include <userver/storages/postgres/cluster.hpp>
 #include <userver/components/component_base.hpp>
-
 #include <optional>
 
-namespace auth_service
+namespace auth_service::repositories
 {
     class AuthRepository final : public userver::components::ComponentBase
     {
@@ -19,7 +18,9 @@ namespace auth_service
             AuthRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 
             std::optional<auth_service::models::User> FindUserByEmail(const std::string& email);
-            bool CreateUser(const std::string& email, const std::string& password_hash);
+            userver::storages::postgres::Transaction CreateUser(const std::string& email, const std::string& password_hash, int& id);
+
+            
 
         private:
             userver::storages::postgres::ClusterPtr pgCluster_;

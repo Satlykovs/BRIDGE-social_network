@@ -22,6 +22,12 @@ components_manager:
     auth-manager: {}
     auth-repository: {}
     jwt-repository: {}
+    producer: {}
+    kafka-producer:
+      delivery_timeout: 10s         
+      queue_buffering_max: 100ms    
+      enable_idempotence: true      
+      security_protocol: PLAINTEXT
     
     jwt-manager:
       secret-key: $secret-key 
@@ -59,5 +65,8 @@ components_manager:
       worker_threads: $worker-threads
     fs-task-processor:  
       worker_threads: $worker-fs-threads
+    producer-task-processor:
+      worker_threads: $producer-worker-threads
+      thread_name: producer-worker
 
   default_task_processor: main-task-processor

@@ -11,7 +11,7 @@
 #include <userver/storages/postgres/io/date.hpp>
 
 
-namespace auth_service
+namespace auth_service::repositories
 {
     AuthRepository::AuthRepository(const userver::components::ComponentConfig& config,
         const userver::components::ComponentContext& context) : ComponentBase(config, context), 
@@ -31,12 +31,16 @@ namespace auth_service
             return std::nullopt;
         }
 
-        bool AuthRepository::CreateUser(const std::string& email, const std::string& passwordHash)
+        userver::storages::postgres::Transaction AuthRepository::CreateUser(const std::string& email, const std::string& passwordHash, int& id)
         {
-            pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, sql_queries::sql::kCreateUser, email, passwordHash);
+            auto trx = pgCluster_->Begin(userver::storages::postgres::Transaction::RW);
+            id = trx.Execute(
+                 sql_queries::sql::kCreateUser, email, passwordHash).AsSingleRow<int>();
+            return trx;
 
-            return true;
         }
+
+
 
 
 

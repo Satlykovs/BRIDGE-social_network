@@ -3,13 +3,13 @@
 
 #include <jwt-cpp/jwt.h>
 #include <userver/components/component_fwd.hpp>
-#include <userver/components/component_base.hpp>
 #include <userver/yaml_config/schema.hpp>
+
 #include <optional>
 #include <string>
 #include <chrono>
 #include  "Repositories/JwtRepository.hpp"
-namespace auth_service
+namespace auth_service::managers
 {
 
 class JwtManager final : public userver::components::ComponentBase
@@ -38,7 +38,7 @@ private:
         std::string CreateToken(int userId, std::chrono::system_clock::time_point expTime) const;
 
 
-        JwtRepository& jwtRepository_;
+        auth_service::repositories::JwtRepository& jwtRepository_;
 
     
 };

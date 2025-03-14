@@ -7,7 +7,7 @@
 #include <userver/formats/json.hpp>
 #include <userver/components/component_list.hpp>
 
-namespace auth_service
+namespace auth_service::controllers
 {
     class RegisterHandler final : public userver::server::handlers::HttpHandlerJsonBase
     {
@@ -22,7 +22,7 @@ namespace auth_service
                 userver::server::request::RequestContext& context) const;
         
             private:
-                AuthManager& authManager_;
+                auth_service::managers::AuthManager& authManager_;
     };
 
     class LoginHandler final : public userver::server::handlers::HttpHandlerJsonBase
@@ -38,7 +38,7 @@ namespace auth_service
                 userver::server::request::RequestContext& context) const;
 
             private:
-                AuthManager& authManager_;
+                auth_service::managers::AuthManager& authManager_;
     };
 
     class RefreshHandler final : public userver::server::handlers::HttpHandlerJsonBase
@@ -54,7 +54,7 @@ namespace auth_service
                 userver::server::request::RequestContext& context) const;
 
             private:
-                JwtManager& jwtManager_;
+                auth_service::managers::JwtManager& jwtManager_;
     };
 
     void AddAuthController(userver::components::ComponentList& component_list);

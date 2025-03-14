@@ -3,10 +3,12 @@
 
 #include "Repositories/AuthRepository.hpp"
 #include "Managers/JwtManager.hpp"
+#include "Managers/KafkaProducer.hpp"
 #include <userver/components/component_fwd.hpp>
 #include <bcrypt/BCrypt.hpp>
 #include <optional>
-namespace auth_service
+
+namespace auth_service::managers
 {
 
     class AuthManager final : public userver::components::ComponentBase
@@ -16,15 +18,16 @@ namespace auth_service
 
             AuthManager(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 
-            bool RegisterUser(auth_service::models::UserDTO& user_data);
+            void RegisterUser(auth_service::models::UserDTO& user_data);
 
             std::pair<std::string, std::string> AuthenticateUser(auth_service::models::UserDTO& user_data);
 
             std::pair<std::string, std::string> RefreshUserTokens(const std::string& refreshToken);
 
         private:
-            auth_service::AuthRepository& authRepository_;
-            auth_service::JwtManager& jwtManager_;
+            auth_service::repositories::AuthRepository& authRepository_;
+            auth_service::managers::JwtManager& jwtManager_;
+            auth_service::managers::Producer& kafkaProducer_;
     };
 
     std::string HashPassword(const std::string& password);
