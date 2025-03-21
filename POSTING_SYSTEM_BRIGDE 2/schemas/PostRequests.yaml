@@ -1,0 +1,48 @@
+components:
+  schemas:
+    CreateEditPostDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        current_user_ID:
+          type: integer
+          description: author`s ID
+        text:
+          type: string
+          description: text of the post
+      required:
+        - current_user_ID
+        - text
+      description: 'Надо ещё дохуя всего добавить фото и видео'
+    
+    DeletePostDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        current_user_ID:
+          type: integer
+          description: author`s ID
+        post_to_delete_ID:
+          type: integer
+          description: post to delte ID
+      required:
+        - current_user_ID
+        - post_to_delete_ID
+      description: 'Надо ещё пачками уметь удалять фото у видео(возможно одно или несколько)'
+    
+    GetPostDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        post_to_get_ID:
+          type: integer
+          description: post to get ID
+      required:
+        - post_to_get_ID
+      description: 'нужно добавить получение всех постов(или айдишников постов), которые принадлежат одному автору, и при этом сортировать их в порядке создания'
+      
+
+
+    
+       
+      
