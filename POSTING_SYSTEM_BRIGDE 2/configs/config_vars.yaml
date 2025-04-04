@@ -1,6 +1,0 @@
-server-port: 8080
-logger-level: warning
-db-path: "postgresql://user:password@post-db:5432/postdatabase"
-worker-threads: 8
-worker-fs-threads: 8
-producer-worker-threads: 4
