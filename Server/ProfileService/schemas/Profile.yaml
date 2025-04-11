@@ -32,6 +32,8 @@ components:
           type: string
         avatar_url:
           type: string
+        is_first_login:
+          type: boolean
       required:
         - id
         - email
@@ -39,6 +41,7 @@ components:
         - last_name
         - username
         - avatar_url
+        - is_first_login
 
 
         
