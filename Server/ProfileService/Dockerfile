@@ -1,6 +1,10 @@
 FROM ghcr.io/userver-framework/ubuntu-22.04-userver:latest
 
+<<<<<<< HEAD
 RUN sudo apt update && sudo apt install -y clang-format
+=======
+#RUN sudo apt update && sudo apt install -y clang-format
+>>>>>>> dev/Satlykov
 
 
 

@@ -32,8 +32,11 @@ components:
           type: string
         avatar_url:
           type: string
+<<<<<<< HEAD
         is_first_login:
           type: boolean
+=======
+>>>>>>> dev/Satlykov
       required:
         - id
         - email
@@ -41,7 +44,10 @@ components:
         - last_name
         - username
         - avatar_url
+<<<<<<< HEAD
         - is_first_login
+=======
+>>>>>>> dev/Satlykov
 
 
         
