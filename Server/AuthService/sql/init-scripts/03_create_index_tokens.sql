@@ -1,1 +1,0 @@
-CREATE INDEX IF NOT EXISTS token_idx ON refresh_tokens (token, expires_at);
