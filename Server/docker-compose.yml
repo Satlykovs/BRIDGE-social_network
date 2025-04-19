@@ -5,6 +5,9 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: userdatabase
+
+    command: postgres -c max_connections=350
+
     hostname: user-db
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d userdatabase"]
@@ -12,7 +15,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./AuthService/sql/init-scripts:/docker-entrypoint-initdb.d
+      - ./init-scripts:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
 
   auth_service:
@@ -27,6 +30,18 @@ services:
     hostname: auth-service
     ports:
       - 8080:8080
+  profile_service:
+    build:
+      context: ./ProfileService
+      dockerfile: Dockerfile
+    depends_on:
+      user_db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    hostname: profile-service
+    ports:
+      - 8081:8080
 
 
   zookeeper:
@@ -64,7 +79,7 @@ services:
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     ports:
-    - 8081:8080
+    - 9090:8080
     environment:
       DYNAMIC_CONFIG_ENABLED: true
 
@@ -73,6 +88,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
+      
     hostname: host-pgadmin  
     ports:
       - 5050:80
