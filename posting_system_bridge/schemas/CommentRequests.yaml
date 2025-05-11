@@ -1,0 +1,23 @@
+components:
+  schemas:
+    CreateCommentDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        post_ID:
+          type: integer
+        author_ID:
+          type: integer
+        content:
+          type: string
+      required: [post_ID, author_ID, content]
+      description: Создать комментарий к посту
+
+    GetCommentsDTO:
+      type: object
+      additionalProperties: false
+      properties:
+        post_to_get_ID:
+          type: integer
+      required: [post_to_get_ID]
+      description: Получить все комментарии к посту
