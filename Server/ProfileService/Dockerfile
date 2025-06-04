@@ -1,6 +1,6 @@
-FROM ghcr.io/userver-framework/ubuntu-22.04-userver:latest
+FROM ghcr.io/userver-framework/ubuntu-22.04-userver:v2.8
 
-#RUN sudo apt update && sudo apt install -y clang-format
+RUN sudo apt update && sudo apt install -y clang-format
 
 
 
