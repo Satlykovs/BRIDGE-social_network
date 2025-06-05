@@ -18,6 +18,9 @@ namespace profile_service::repositories
             ProfileRepository(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 
             std::string UpdateAvatar(int id, const std::string& fileUrl);
+            
+            profile_service::models::ProfileInfo UpdateInfo(int id, const std::string& first_name, const std::string& last_name, const std::string& username);
+
 
             std::optional<profile_service::models::ProfileInfo> GetProfileById(int id);
 

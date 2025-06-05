@@ -11,6 +11,7 @@
 #include "Managers/AuthManager.hpp"
 #include "Managers/JwtManager.hpp"
 #include "Repositories/AuthRepository.hpp"
+#include "JwtMiddleware.hpp"
 // #include "Managers/KafkaProducer.hpp"
 
 int main(int argc, char *argv[]) {
@@ -22,6 +23,7 @@ int main(int argc, char *argv[]) {
                             .Append<auth_service::managers::AuthManager>()
                             .Append<auth_service::repositories::JwtRepository>()
                             .Append<auth_service::managers::JwtManager>()
+                            .Append<jwt_middleware::JwtMiddlewareFactory>()
                             .Append<userver::components::Secdist>()
                             .Append<userver::components::DefaultSecdistProvider>()
                             // .Append<userver::kafka::ProducerComponent>()

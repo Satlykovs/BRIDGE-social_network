@@ -32,4 +32,13 @@ namespace profile_service::repositories
         }
         return res.AsSingleRow<profile_service::models::ProfileInfo>(userver::storages::postgres::kRowTag);
     }
+
+    profile_service::models::ProfileInfo ProfileRepository::UpdateInfo
+    (int id, const std::string& first_name, const std::string& last_name, const std::string& username)
+    {
+        return pgCluster_->Execute(userver::storages::postgres::ClusterHostType::kMaster, 
+                sql_queries::sql::kUpdateUserProfile, id, first_name, last_name, username)
+                .AsSingleRow<profile_service::models::ProfileInfo>(userver::storages::postgres::kRowTag);
+    }
+
 }

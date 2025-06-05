@@ -4,8 +4,6 @@ components:
       type: object
       additionalProperties: false
       properties:
-        id:
-          type: integer
         first_name:
           type: string
         last_name:

@@ -2,6 +2,10 @@ config_vars: ./configs/config_vars.yaml
 
 components_manager:
   components:
+  
+    jwt-middleware:
+      secret-key: $secret-key
+
     server:
       listener:
         port: $server-port
@@ -17,11 +21,17 @@ components_manager:
       connlimit_mode: auto
       min_pool_size: 50
       max_pool_size: 1000
-      max_queue_size: 10000    
+      max_queue_size: 10000
+
+    default-server-middleware-pipeline-builder:
+      append:
+        - jwt-middleware    
 
     auth-manager: {}
     auth-repository: {}
     jwt-repository: {}
+
+
     
     
     jwt-manager:

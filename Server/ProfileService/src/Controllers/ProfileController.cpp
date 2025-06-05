@@ -11,6 +11,7 @@
 #include <userver/http/content_type.hpp>
 #include <userver/formats/json.hpp>
 #include <userver/http/status_code.hpp>
+#include <userver/server/http/http_method.hpp>
 
 namespace profile_service::controllers
 {
@@ -34,7 +35,7 @@ namespace profile_service::controllers
                         userver::server::handlers::ExternalBody{"NO IMAGE"});
                 }
 
-                const auto& id = std::stoi(request.GetPathArg("id"));
+                const int& id = context.GetData<int>("user_id");
                 const auto& image = request.GetFormDataArg("file");
 
                 const auto fileUrl = profileManager_.UpdateAvatar(id, std::string(image.value));
@@ -42,14 +43,18 @@ namespace profile_service::controllers
             }
     
     
-    GetInfoHandler::GetInfoHandler(const userver::components::ComponentConfig& config, 
-        const userver::components::ComponentContext& context) : HttpHandlerBase(config, context),
+    InfoHandler::InfoHandler(const userver::components::ComponentConfig& config, 
+        const userver::components::ComponentContext& context) : HttpHandlerJsonBase(config, context),
         profileManager_(context.FindComponent<profile_service::managers::ProfileManager>()) {}
 
-    std::string GetInfoHandler::HandleRequestThrow(const userver::server::http::HttpRequest& request,
+    userver::formats::json::Value InfoHandler::HandleRequestJsonThrow(const userver::server::http::HttpRequest& request,
+        const userver::formats::json::Value& requestJson,
         userver::server::request::RequestContext& context) const
         {
-            const auto& id = std::stoi(request.GetPathArg("id"));
+            const int& id = context.GetData<int>("user_id");
+            
+            if  (request.GetMethod() == userver::server::http::HttpMethod::kGet)
+            {
 
             const auto info = profileManager_.GetInfo(id);
             if (info == std::nullopt)
@@ -57,7 +62,23 @@ namespace profile_service::controllers
                 request.GetHttpResponse().SetStatus(userver::server::http::HttpStatus::kNotFound);
                 return {};
             }
+            
+            return userver::formats::json::ValueBuilder(info.value()).ExtractValue();
+            }
 
-            return userver::formats::json::ToString(userver::formats::json::ValueBuilder{info.value()}.ExtractValue());
+            else if (request.GetMethod() == userver::server::http::HttpMethod::kPost)
+            {
+                auto dto = requestJson.As<profile_service::models::ProfileUpdateDTO>();
+
+                auto newInfo = profileManager_.UpdateInfo(id, dto);
+
+                return userver::formats::json::ValueBuilder(newInfo).ExtractValue();
+            }
+            else
+            {
+                auto& httpResponse = request.GetHttpResponse();
+                httpResponse.SetStatus(userver::server::http::HttpStatus::kMethodNotAllowed);
+                return {};
+            }
         }
-}
+    }

@@ -2,6 +2,10 @@ config_vars: ./configs/config_vars.yaml
 
 components_manager:
   components:
+
+    jwt-middleware:
+      secret-key: $j-secret-key
+
     server:
       listener:
         port: $server-port
@@ -19,7 +23,10 @@ components_manager:
       max_pool_size: 1000
       max_queue_size: 10000 
 
-    
+    default-server-middleware-pipeline-builder:
+      append:
+        - jwt-middleware    
+
     profile-manager: {}
     profile-repository: {}
     s3-manager:
@@ -36,14 +43,14 @@ components_manager:
       fs-task-processor: fs-task-processor
 
     update-avatar-handler:
-      path: /profile/{id}/avatar
+      path: /profile/avatar
       method: PATCH
       max_request_size: 4194304
       task_processor: main-task-processor
     
-    get-info-handler:
-      path: /profile/{id}
-      method: GET
+    info-handler:
+      path: /profile
+      method: GET,POST
       task_processor: main-task-processor
     
     logging:  

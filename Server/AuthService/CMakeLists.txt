@@ -10,6 +10,9 @@ find_package(userver REQUIRED core postgresql chaotic kafka)
 find_package(jwt-cpp CONFIG REQUIRED)
 find_package(Boost REQUIRED COMPONENTS regex)
 
+
+add_subdirectory(../Common/JwtMiddleware ${CMAKE_BINARY_DIR}/Common/JwtMiddleware)
+
 file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
 
 file (GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp)
@@ -41,7 +44,7 @@ userver_add_sql_library(
 add_executable(${PROJECT_NAME} main.cpp ${CPP_FILES})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC bcrypt)
-target_link_libraries(${PROJECT_NAME} PRIVATE jwt-cpp::jwt-cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE jwt-cpp::jwt-cpp  JwtMiddleware)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_sql ${PROJECT_NAME}-chgen)
 

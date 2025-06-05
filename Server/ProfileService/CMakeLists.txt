@@ -8,9 +8,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(userver REQUIRED core postgresql chaotic kafka s3api)
 
+
 file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
 
 file (GLOB_RECURSE CPP_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/**.cpp)
+
+add_subdirectory(../Common/JwtMiddleware ${CMAKE_BINARY_DIR}/Common/JwtMiddleware)
+
 
 include_directories(
     
@@ -42,7 +46,7 @@ add_executable(${PROJECT_NAME} main.cpp ${CPP_FILES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_sql ${PROJECT_NAME}-chgen)
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql userver::chaotic userver::s3api userver::kafka userver::s3api)
+target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql userver::chaotic userver::s3api userver::kafka userver::s3api JwtMiddleware)
 
 find_package(ICU REQUIRED COMPONENTS uc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc)

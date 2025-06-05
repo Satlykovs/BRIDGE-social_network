@@ -43,5 +43,12 @@ namespace profile_service::managers
     {
         return profileRepository_.GetProfileById(id);
     }
+
+
+    profile_service::models::ProfileInfo ProfileManager::UpdateInfo(int id, profile_service::models::ProfileUpdateDTO profileInfo)
+    {
+        return profileRepository_.UpdateInfo(id, profileInfo.first_name.value_or(""), profileInfo.last_name.value_or(""), profileInfo.username.value_or(""));
+    }
+
     
 }

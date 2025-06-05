@@ -18,7 +18,7 @@ namespace profile_service::managers
 
             std::string UpdateAvatar(int id, const std::string& image);
 
-            profile_service::models::ProfileInfo UpdateInfo(profile_service::models::ProfileUpdateDTO profileInfo);
+            profile_service::models::ProfileInfo UpdateInfo(int id, profile_service::models::ProfileUpdateDTO profileInfo);
 
             std::optional<profile_service::models::ProfileInfo> GetInfo(int id);
         
