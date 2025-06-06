@@ -1,0 +1,97 @@
+config_vars: ./configs/config_vars.yaml
+
+components_manager:
+  components:
+  
+    jwt-middleware:
+      secret-key: $j-secret-key
+
+    server:
+      listener:
+        port: $server-port
+        task_processor: main-task-processor
+    secdist: {}
+    default-secdist-provider:
+      config: $secdist-path
+    post-db:
+      dbalias: post-db
+      blocking_task_processor: fs-task-processor
+      dns_resolver: async
+      sync-start: true
+      connlimit_mode: auto
+      min_pool_size: 50
+      max_pool_size: 1000
+      max_queue_size: 10000
+
+    default-server-middleware-pipeline-builder:
+      append:
+        - jwt-middleware
+
+    post-manager: {}
+    post-repository: {}
+
+    s3-manager:
+      access-key: $access-key
+      secret-key: $secret-key
+
+
+
+    testsuite-support: {}
+
+    dns-client:
+            fs-task-processor: fs-task-processor
+
+    http-client:
+      fs-task-processor: fs-task-processor
+
+    create-post-handler:
+      path: /post
+      method: POST
+      max_request_size: 5242880
+      task_processor: main-task-processor
+
+    update-post-handler:
+      path: /post/{post_id}
+      method: PATCH
+      max_request_size: 5242880
+      task_processor: main-task-processor
+
+
+    delete-post-handler:
+      path: /post/{post_id}
+      method: DELETE
+      max_request_size: 5242880
+      task_processor: main-task-processor
+
+    toggle-like-handler:
+      path: /post/like/{post_id}
+      method: GET
+      task_processor: main-task-processor
+
+    get-post-handler:
+      path: /post/{post_id}
+      method: GET
+      task_processor: main-task-processor
+
+    get-user-posts-handler:
+      path: /post/all/{user_id}
+      method: GET
+      task_processor: main-task-processor
+  
+
+    logging:  
+      fs-task-processor: fs-task-processor
+      loggers:
+        default:
+          file_path: '@stdout'
+          level: $logger-level
+          format: ltsv
+
+  task_processors:
+    main-task-processor:
+      worker_threads: $worker-threads
+    fs-task-processor:  
+      worker_threads: $worker-fs-threads
+
+
+  default_task_processor: main-task-processor
