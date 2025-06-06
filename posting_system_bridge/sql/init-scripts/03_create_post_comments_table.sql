@@ -1,7 +1,0 @@
-CREATE TABLE post_comments (
-  id SERIAL PRIMARY KEY,
-  post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-  author_id INTEGER NOT NULL,
-  content TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
