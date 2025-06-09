@@ -15,4 +15,4 @@ WORKDIR /app
 
 COPY ./Common ./Common
 
-CMD ["sleep", "infinity"]
+# CMD ["sleep", "infinity"]
