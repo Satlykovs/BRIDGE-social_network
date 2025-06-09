@@ -1,0 +1,35 @@
+components:
+  schemas:
+    AddParticipantRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        user_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/UserId'
+        role:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/ParticipantRole'
+      required:
+        - user_id
+
+    ParticipantInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        user_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/UserId'
+        role:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/ParticipantRole'
+        conversation_id: 
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/ConversationId'
+        joined_at:
+          type: string
+          format: date-time
+        last_read_message_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/MessageId'
+        notifications_enabled:
+          type: boolean 
+      required:
+        - user_id
+        - role
+        - joined_at
+        
