@@ -1,6 +1,6 @@
 FROM satlykovs/bridges-base:1.0
 
-#RUN sudo apt update && sudo apt install -y clang-format clang-tidy
+RUN sudo apt update && sudo apt install -y clang-format
 
 RUN git clone https://github.com/trusch/libbcrypt.git /tmp/libbcrypt && \
     cd /tmp/libbcrypt && \

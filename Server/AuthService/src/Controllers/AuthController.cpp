@@ -59,14 +59,18 @@ namespace auth_service::controllers
 		auto userData = requestJson.As<auth_service::models::UserDTO>();
 		try
 		{
-			std::pair<std::string, std::string> tokens = authManager_.AuthenticateUser(userData);
+			auto [accessToken, refreshToken] = authManager_.AuthenticateUser(userData);
 
 			auto& response = request.GetHttpResponse();
-			response.SetHeader(std::string_view("Authorization"), "Bearer " + tokens.first);
-			response.SetHeader(std::string_view("X-Refresh-Token"), tokens.second);
+			response.SetHeader(std::string_view("Authorization"), "Bearer " + accessToken.first);
+			response.SetHeader(std::string_view("X-Refresh-Token"), refreshToken.first);
 			response.SetStatus(userver::server::http::HttpStatus::kOk);
 
-			return {};
+			userver::formats::json::ValueBuilder valueBuilder;
+			valueBuilder["acess-token-exp"] = accessToken.second;
+			valueBuilder["refresh-token-exp"] = refreshToken.second;
+
+			return valueBuilder.ExtractValue();
 		}
 		catch (const std::exception& e)
 		{

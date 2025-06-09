@@ -4,6 +4,7 @@
 #include <jwt-cpp/jwt.h>
 #include <userver/components/component_fwd.hpp>
 #include <userver/yaml_config/schema.hpp>
+#include <userver/utils/datetime/timepoint_tz.hpp>
 
 #include <optional>
 #include <string>
@@ -20,8 +21,8 @@ public:
     JwtManager(const userver::components::ComponentConfig& config, 
                 const userver::components::ComponentContext& context);
     
-    std::string GenerateAccessToken(int userId) const;
-    std::string GenerateRefreshToken(int userId) const;
+    std::pair<std::string, userver::utils::datetime::TimePointTz> GenerateAccessToken(int userId) const;
+    std::pair<std::string, userver::utils::datetime::TimePointTz> GenerateRefreshToken(int userId) const;
 
     std::pair<std::string, std::string> RefreshTokens(const std::string& refreshToken);
 

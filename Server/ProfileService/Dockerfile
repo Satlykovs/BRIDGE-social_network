@@ -1,6 +1,6 @@
 FROM satlykovs/bridges-base:1.0
 
-#RUN sudo apt update && sudo apt install -y clang-format
+RUN sudo apt update && sudo apt install -y clang-format
 
 
 

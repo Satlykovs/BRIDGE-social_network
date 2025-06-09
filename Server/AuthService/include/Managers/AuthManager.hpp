@@ -7,6 +7,8 @@
 #include <userver/components/component_fwd.hpp>
 #include <bcrypt/BCrypt.hpp>
 #include <optional>
+#include <userver/formats/json/value.hpp>
+
 
 namespace auth_service::managers
 {
@@ -20,9 +22,9 @@ namespace auth_service::managers
 
             void RegisterUser(auth_service::models::UserDTO& user_data);
 
-            std::pair<std::string, std::string> AuthenticateUser(auth_service::models::UserDTO& user_data);
+            std::pair<std::pair<std::string, userver::utils::datetime::TimePointTz>, std::pair<std::string, userver::utils::datetime::TimePointTz>>
+            AuthenticateUser(auth_service::models::UserDTO& user_data);
 
-            std::pair<std::string, std::string> RefreshUserTokens(const std::string& refreshToken);
 
         private:
             auth_service::repositories::AuthRepository& authRepository_;

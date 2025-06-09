@@ -5,6 +5,7 @@
 #include <userver/logging/log.hpp>
 #include <userver/utils/optionals.hpp>
 #include <chrono>
+#include  <userver/utils/datetime/timepoint_tz.hpp>
 
 
 namespace auth_service::managers
@@ -33,19 +34,20 @@ std::string JwtManager::CreateToken(int userId, std::chrono::system_clock::time_
     .sign(jwt::algorithm::hs256{secretKey_});
 }
 
-std::string JwtManager::GenerateAccessToken(int userId) const
+std::pair<std::string, userver::utils::datetime::TimePointTz> JwtManager::GenerateAccessToken(int userId) const
 {
-    return CreateToken(userId, std::chrono::system_clock::now() + accessTokenLifetime_);
+    auto expTime = std::chrono::system_clock::now() + accessTokenLifetime_;
+    return {CreateToken(userId, expTime), userver::utils::datetime::TimePointTz(expTime)};
 }
 
-std::string JwtManager::GenerateRefreshToken(int userId) const
+std::pair<std::string, userver::utils::datetime::TimePointTz> JwtManager::GenerateRefreshToken(int userId) const
 {
     auto expTime = std::chrono::system_clock::now() + refreshTokenLifetime_;
     std::string token = CreateToken(userId, expTime);
 
     jwtRepository_.AddRefreshToken(userId, token, userver::storages::postgres::TimePointWithoutTz(expTime));
 
-    return token;
+    return {token, userver::utils::datetime::TimePointTz(expTime)};
 
 }
 
