@@ -3,6 +3,7 @@
 // #include "Managers/KafkaProducer.hpp"
 
 #include <userver/components/component.hpp>
+#include <userver/utils/datetime/timepoint_tz.hpp>
 #include <userver/utils/optionals.hpp>
 #include <bcrypt/BCrypt.hpp>
 #include <optional>
@@ -28,7 +29,8 @@ namespace auth_service::managers
         
     }
 
-    std::pair<std::string, std::string> AuthManager::AuthenticateUser(auth_service::models::UserDTO& userData)
+    std::pair<std::pair<std::string, userver::utils::datetime::TimePointTz>, std::pair<std::string, userver::utils::datetime::TimePointTz>>
+     AuthManager::AuthenticateUser(auth_service::models::UserDTO& userData)
     {
         auto user = authRepository_.FindUserByEmail(userData.email);
         if (user == std::nullopt)

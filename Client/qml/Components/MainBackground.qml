@@ -1,5 +1,6 @@
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
+
 
 Rectangle {
     radius: 25

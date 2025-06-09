@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Rectangle {
     id: customButton
@@ -31,10 +31,13 @@ Rectangle {
 
     // Тень
     layer.enabled: true
-    layer.effect: DropShadow {
-        color: "#40000000"
-        radius: 8
-        samples: 16
+    layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#40000000"
+        shadowBlur: 0.5
+        shadowOpacity: 0.25
+        shadowHorizontalOffset: 0
+        shadowVerticalOffset: 0
     }
 
     // Состояния

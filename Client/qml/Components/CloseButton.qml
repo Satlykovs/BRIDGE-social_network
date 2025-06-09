@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 
 Rectangle {
@@ -58,10 +58,11 @@ Rectangle {
 
     // Тень
     layer.enabled: true
-    layer.effect: DropShadow {
-        color: "#40000000"
-        radius: 8
-        samples: 16
-        verticalOffset: 2
+    layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#40000000"
+        shadowBlur: 0.5
+        shadowVerticalOffset: 2
+        shadowHorizontalOffset: 0
     }
 }

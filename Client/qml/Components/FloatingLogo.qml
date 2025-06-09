@@ -1,5 +1,5 @@
 import QtQuick
-import Qt5Compat.GraphicalEffects
+import QtQuick.Effects
 
 Image {
     width: 120
@@ -8,11 +8,14 @@ Image {
     fillMode: Image.PreserveAspectFit
 
     layer.enabled: true
-    layer.effect: DropShadow {
-        transparentBorder: true
-        radius: 16
-        samples: 32
-        color: "#80FFFFFF"
+    layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: "#80FFFFFF"
+        shadowBlur: 0.8
+        shadowOpacity: 0.5
+        shadowHorizontalOffset: 0
+        shadowVerticalOffset: 0
+        autoPaddingEnabled: true
     }
 
     SequentialAnimation on y {
