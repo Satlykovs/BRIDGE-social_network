@@ -43,6 +43,11 @@ qt_add_qml_module(appClient.Components
     OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Client/Components
     RESOURCES
     QML_FILES
+    QML_FILES qml/Components/PostList.qml
+    QML_FILES qml/Components/PostHeader.qml
+    QML_FILES qml/Components/Post.qml
+    QML_FILES qml/Components/Avatar.qml
+    QML_FILES qml/Components/ImagePreview.qml
 
 
 )
@@ -60,6 +65,7 @@ qt_add_qml_module(appClient.Pages
 
 
     OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Client/Pages
+    QML_FILES qml/Pages/PostPage.qml
 )
 
 qt_add_qml_module(appClient
