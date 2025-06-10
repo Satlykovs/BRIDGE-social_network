@@ -6,7 +6,7 @@ Text {
 
     id: linkText
     color: "#FFD93D"
-    font: Theme.linkFont
+
 
     MouseArea {
         anchors.fill: parent

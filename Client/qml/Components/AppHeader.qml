@@ -22,12 +22,7 @@ Column {
     Text {
         text: "Where worlds connect"
         color: "#FFECD2"
-        font:
-        {
-            family: "Open Sans"
-            pixelSize: 14
-            italic: true
-        }
+
 
         anchors.horizontalCenter: parent.horizontalCenter
     }

@@ -44,8 +44,8 @@ namespace auth_service::managers
         {
             throw std::runtime_error("Invalid password");
         }
-        return {jwtManager_.GenerateAccessToken(user.value().id),
-             jwtManager_.GenerateRefreshToken(user.value().id)};
+        return std::make_pair(jwtManager_.GenerateAccessToken(user.value().id),
+             jwtManager_.GenerateRefreshToken(user.value().id));
         
     }
 

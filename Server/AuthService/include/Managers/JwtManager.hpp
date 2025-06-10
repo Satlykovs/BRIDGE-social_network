@@ -24,7 +24,8 @@ public:
     std::pair<std::string, userver::utils::datetime::TimePointTz> GenerateAccessToken(int userId) const;
     std::pair<std::string, userver::utils::datetime::TimePointTz> GenerateRefreshToken(int userId) const;
 
-    std::pair<std::string, std::string> RefreshTokens(const std::string& refreshToken);
+    std::pair<std::pair<std::string, userver::utils::datetime::TimePointTz>, std::pair<std::string, userver::utils::datetime::TimePointTz>>
+     RefreshTokens(const std::string& refreshToken);
 
     bool VerifyToken(const std::string& token) const; //Note: Should be removed to Gateway in future
 	

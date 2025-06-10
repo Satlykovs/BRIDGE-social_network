@@ -106,12 +106,15 @@ namespace auth_service::controllers
 			auto [newAccessToken, newRefreshToken] = jwtManager_.RefreshTokens(refreshToken);
 
 			auto& response = request.GetHttpResponse();
-			response.SetHeader(std::string_view("Authorization"), "Bearer " + newAccessToken);
-			response.SetHeader(std::string_view("X-Refresh-Token"), newRefreshToken);
+			response.SetHeader(std::string_view("Authorization"), "Bearer " + newAccessToken.first);
+			response.SetHeader(std::string_view("X-Refresh-Token"), newRefreshToken.first);
 			response.SetStatus(userver::server::http::HttpStatus::kOk);
 
-			return userver::formats::json::MakeObject(
-				"message", "Token refreshed successfully");
+			userver::formats::json::ValueBuilder valueBuilder;
+			valueBuilder["acess-token-exp"] = newAccessToken.second;
+			valueBuilder["refresh-token-exp"] = newRefreshToken.second;
+
+			return valueBuilder.ExtractValue();
 		}
 		catch (const std::exception& e)
 		{

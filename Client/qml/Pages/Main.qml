@@ -84,8 +84,8 @@ Window {
         LoginPage {
         onLoginSuccess:
         {
-            var profileWindow = Qt.createComponent("ProfileWindow.qml")
-            var window = profileWindow.createObject(null, {email: "test@email.com", mainWindow: mainWindow})
+            var profilePage = Qt.createComponent("ProfilePage.qml")
+            var window = profilePage.createObject()
             mainWindow.hide()
             window.show()
         }

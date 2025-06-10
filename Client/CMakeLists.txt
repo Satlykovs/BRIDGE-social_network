@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2)
+    find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Core5Compat)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -34,12 +34,17 @@ qt_add_qml_module(appClient.Components
         qml/Components/PrimaryButton.qml
         qml/Components/RegisterForm.qml
         qml/Components/TextLink.qml
+        qml/Components/WindowControls.qml
+        qml/Components/WindowButton.qml
     RESOURCES
         resources.qrc
 
 
     OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Client/Components
-    QML_FILES qml/Components/AppHeader.qml
+    RESOURCES
+    QML_FILES
+
+
 )
 
 qt_add_qml_module(appClient.Pages
@@ -50,7 +55,7 @@ qt_add_qml_module(appClient.Pages
     QML_FILES
         qml/Pages/LoginPage.qml
         qml/Pages/Main.qml
-        qml/Pages/ProfileWindow.qml
+        qml/Pages/ProfilePage.qml
         qml/Pages/RegisterPage.qml
 
 
@@ -60,6 +65,10 @@ qt_add_qml_module(appClient.Pages
 qt_add_qml_module(appClient
     URI Client
     VERSION 1.0
+    SOURCES  NetworkManager.h
+    SOURCES
+    SOURCES ProfileLoader.cpp
+    SOURCES ProfileLoader.h
 
 
 )

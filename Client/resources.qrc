@@ -1,7 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/avatar.jpg</file>
+        <file>images/avatar.png</file>
         <file>images/bridge_logo.png</file>
         <file>images/bridge_logo.svg</file>
+        <file>images/zabuhal.jpg</file>
+        <file>images/zabuhal2.jpg</file>
+        <file>images/close.png</file>
     </qresource>
 </RCC>

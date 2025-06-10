@@ -73,7 +73,8 @@ bool JwtManager::VerifyToken(const std::string& token) const
 }
 
 
-std::pair<std::string, std::string> JwtManager::RefreshTokens(const std::string& refreshToken)
+std::pair<std::pair<std::string, userver::utils::datetime::TimePointTz>, std::pair<std::string, userver::utils::datetime::TimePointTz>>
+ JwtManager::RefreshTokens(const std::string& refreshToken)
 {
     if (!VerifyToken(refreshToken))
     {
@@ -89,10 +90,10 @@ std::pair<std::string, std::string> JwtManager::RefreshTokens(const std::string&
     jwtRepository_.DeleteRefreshToken(refreshToken);
     int userId = std::stoi(jwt::decode(refreshToken).get_subject());
 
-    std::string accessToken = GenerateAccessToken(userId);
-    std::string newRefreshToken = GenerateRefreshToken(userId);
+    auto accessToken = GenerateAccessToken(userId);
+    auto newRefreshToken = GenerateRefreshToken(userId);
 
-    return {accessToken, newRefreshToken};
+    return std::make_pair(accessToken, newRefreshToken);
 
 }
 
