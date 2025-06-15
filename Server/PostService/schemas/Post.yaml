@@ -10,13 +10,17 @@ components:
           type: integer
         text:
           type: string
-        image_url:
+        imageUrl:
           type: string
-        likes_count:
+        likesCount:
           type: integer
-        created_at:
+        createdAt:
           type: string
           format: date-time
+        liked:
+          type: boolean
+        isMine:
+          type: boolean
           
           
           

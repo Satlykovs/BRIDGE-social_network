@@ -18,9 +18,9 @@ namespace post_service::repositories
 		PostRepository(const userver::components::ComponentConfig& config,
 					   const userver::components::ComponentContext& context);
 
-		void CreatePost(int userId, const std::string& text,
+		post_service::models::Post CreatePost(int userId, const std::string& text,
 						const std::string& fileUrl);
-		std::string UpdatePost(int userId, int postId, const std::string& text,
+		std::pair<std::string, post_service::models::Post> UpdatePost(int userId, int postId, const std::string& text,
 							   const std::string& fileUrl);
 		std::string DeletePost(int userId, int postId);
 
@@ -30,9 +30,9 @@ namespace post_service::repositories
 		int AddLike(int userId, int postId);
 		int RemoveLike(int userId, int postId);
 
-		std::optional<post_service::models::Post> GetPost(int postId);
+		std::optional<post_service::models::Post> GetPost(int postId, int userId);
 		std::optional<std::vector<post_service::models::Post>> GetPosts(
-			int userId);
+			int userId, int targetUserId);
 
 	   private:
 		userver::storages::postgres::ClusterPtr pgCluster_;

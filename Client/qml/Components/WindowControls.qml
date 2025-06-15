@@ -5,25 +5,21 @@ Row {
     spacing: 12
     anchors.margins: 15
     property Window window
+    property bool wasMaximized: false
 
-    // Repeater создаст три кнопки на основе своей модели
     Repeater {
-        // МОДЕЛЬ ТЕПЕРЬ НАХОДИТСЯ ЗДЕСЬ, ГДЕ И ДОЛЖНА БЫТЬ
         model: [
             { "type": "minimize" },
             { "type": "maximize" },
             { "type": "close" }
         ]
 
-        // Делегат (шаблон) для каждой кнопки
         delegate: Rectangle {
             id: button
             width: 24; height: 24; radius: 12
             color: area.pressed ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.2)"
 
-            // --- Рисуем иконку в зависимости от типа ---
-
-            // Иконка "минус"
+            // --- Иконки (оставляем как было) ---
             Rectangle {
                 visible: modelData.type === "minimize"
                 width: parent.width * 0.5; height: 2
@@ -31,7 +27,6 @@ Row {
                 anchors.centerIn: parent
             }
 
-            // Иконка "квадрат"
             Item {
                 visible: modelData.type === "maximize"
                 anchors.fill: parent
@@ -50,7 +45,6 @@ Row {
                 }
             }
 
-            // Иконка "крестик"
             Item {
                 visible: modelData.type === "close"
                 anchors.fill: parent
@@ -67,20 +61,29 @@ Row {
             }
 
             MouseArea {
-                id: area; anchors.fill: parent; hoverEnabled: true
+                id: area
+                anchors.fill: parent
+                hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
 
-                // ЛОГИКА КЛИКА ТЕПЕРЬ ЗДЕСЬ, ВНУТРИ MOUSEAREA
                 onClicked: {
                     if (modelData.type === "minimize") {
-                        root.window.showMinimized()
-                    } else if (modelData.type === "maximize") {
-                        if (root.window.visibility === Window.Maximized) {
-                            root.window.showNormal()
+                        if (window.visibility === Window.Maximized) {
+                            window.showNormal()
+                            // Ждем завершения анимации перед минимизацией
+                            minimizeTimer.start()
                         } else {
-                            root.window.showMaximized()
+                            window.showMinimized()
                         }
-                    } else if (modelData.type === "close") {
+                    }
+                    else if (modelData.type === "maximize") {
+                        if (window.visibility === Window.Maximized) {
+                            window.showNormal()
+                        } else {
+                            window.showMaximized()
+                        }
+                    }
+                    else if (modelData.type === "close") {
                         Qt.quit()
                     }
                 }
@@ -89,6 +92,36 @@ Row {
                 onExited: button.scale = 1.0
             }
             Behavior on scale { NumberAnimation { duration: 100 } }
+        }
+    }
+
+    Timer {
+        id: minimizeTimer
+        interval: 50 // Небольшая задержка для завершения анимации
+        onTriggered: {
+            window.showMinimized()
+        }
+    }
+
+    Connections {
+        target: window
+        function onVisibilityChanged() {
+            if (window.visibility === Window.Windowed && wasMaximized) {
+                // Восстанавливаем максимизированное состояние после разворачивания
+                restoreTimer.start()
+            }
+        }
+    }
+
+    Timer {
+        id: restoreTimer
+        interval: 50
+        onTriggered: {
+            if (wasMaximized) {
+                root.window.visibility = Window.Maximized
+                window.showMaximized()
+                wasMaximized = false
+            }
         }
     }
 }

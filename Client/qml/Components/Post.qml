@@ -6,14 +6,20 @@ import Qt5Compat.GraphicalEffects
 import Client.Components
 
 Rectangle {
+    id: root
     property var postData
     width: Math.min(340, parent.width - 40)
-    height: postContent.implicitHeight + 50
+    implicitHeight: postContent.implicitHeight
     radius: 12
     color: "#2A2A3E"
     border.color: "#3A3A4E"
     border.width: 1
-    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.horizontalCenter: parent?.horizontalCenter ?? undefined
+
+    // Сигналы для обработки действий
+    signal editClicked(var postData)
+    signal deleteClicked(var postData)
+    signal likeClicked()
 
     ColumnLayout {
         id: postContent
@@ -94,9 +100,10 @@ Rectangle {
             Layout.bottomMargin: 15
         }
 
+        // Основная строка с лайками и датой
         RowLayout {
             spacing: 15
-            Layout.bottomMargin: 20
+            Layout.bottomMargin: postData.isMine ? 0 : 15
             Layout.leftMargin: 15
             Layout.rightMargin: 15
 
@@ -171,6 +178,86 @@ Rectangle {
                 text: postData.date
                 color: "#707090"
                 font.pixelSize: 12
+            }
+        }
+
+        // Строка с кнопками (только для своих постов)
+        Row {
+            visible: postData.isMine
+            Layout.alignment: Qt.AlignRight
+            Layout.rightMargin: 15
+            Layout.bottomMargin: 10
+            Layout.topMargin: 40
+            spacing: 15
+
+            // Кнопка редактирования
+            Text {
+                id: editButton
+                text: "✏️"
+                font.pixelSize: 14
+                color: editMouseArea.containsMouse ? "#4FC3F7" : "#AAAAAA"
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.width * 1.8
+                    height: width
+                    radius: width / 2
+                    color: "#4FC3F7"
+                    opacity: editMouseArea.containsMouse ? 0.15 : 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                }
+
+                MouseArea {
+                    id: editMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: editButton.scale = 1.1
+                    onExited: editButton.scale = 1.0
+                    onPressed: editButton.scale = 0.9
+                    onReleased: editButton.scale = editMouseArea.containsMouse ? 1.1 : 1.0
+                    onClicked: root.editClicked(root.postData)
+                }
+
+                Behavior on scale {
+                    NumberAnimation { duration: 100 }
+                }
+            }
+
+            // Кнопка удаления
+            Text {
+                id: deleteButton
+                text: "🗑️"
+                font.pixelSize: 14
+                color: deleteMouseArea.containsMouse ? "#FF5555" : "#AAAAAA"
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: parent.width * 1.8
+                    height: width
+                    radius: width / 2
+                    color: "#FF5555"
+                    opacity: deleteMouseArea.containsMouse ? 0.15 : 0
+                    Behavior on opacity { NumberAnimation { duration: 200 } }
+                }
+
+                MouseArea {
+                    id: deleteMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onEntered: deleteButton.scale = 1.1
+                    onExited: deleteButton.scale = 1.0
+                    onPressed: deleteButton.scale = 0.9
+                    onReleased: deleteButton.scale = deleteMouseArea.containsMouse ? 1.1 : 1.0
+                    onClicked: root.deleteClicked(root.postData)
+                }
+
+                Behavior on scale {
+                    NumberAnimation { duration: 100 }
+                }
             }
         }
     }

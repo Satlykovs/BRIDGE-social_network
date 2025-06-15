@@ -67,7 +67,7 @@ namespace auth_service::controllers
 			response.SetStatus(userver::server::http::HttpStatus::kOk);
 
 			userver::formats::json::ValueBuilder valueBuilder;
-			valueBuilder["acess-token-exp"] = accessToken.second;
+			valueBuilder["acсess-token-exp"] = accessToken.second;
 			valueBuilder["refresh-token-exp"] = refreshToken.second;
 
 			return valueBuilder.ExtractValue();
@@ -111,7 +111,7 @@ namespace auth_service::controllers
 			response.SetStatus(userver::server::http::HttpStatus::kOk);
 
 			userver::formats::json::ValueBuilder valueBuilder;
-			valueBuilder["acess-token-exp"] = newAccessToken.second;
+			valueBuilder["access-token-exp"] = newAccessToken.second;
 			valueBuilder["refresh-token-exp"] = newRefreshToken.second;
 
 			return valueBuilder.ExtractValue();

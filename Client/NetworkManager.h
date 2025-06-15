@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QJsonObject>
+#include <QDateTime>
 
 class NetworkManager : public QObject
 {
@@ -23,35 +24,77 @@ public:
 
     explicit NetworkManager(QObject* parent = nullptr);
 
-    // Универсальный публичный метод для отправки запросов
-    Q_INVOKABLE void sendRequest(const QUrl& url,
-                                 HttpMethod method,
-                                 const QObject* receiver,
-                                 const char* replySlot,
-                                 const QJsonObject& body = QJsonObject(),
-                                 bool needsAuth = true);
+    // Основной метод для JSON запросов
+    Q_INVOKABLE  void sendRequest(const QUrl& url, HttpMethod method,
+                                 QObject* receiver, const char* replySlot,
+                                 const QJsonObject& body = {},
+                                 bool needsAuth = false,
+                                 const QVariant& userData = QVariant());
 
-    // Методы для аутентификации
-    void registerUser(const QString& email, const QString& password);
-    void loginUser(const QString& email, const QString& password);
+    // Методы аутентификации
+    Q_INVOKABLE void registerUser(const QString& email, const QString& password);
+    Q_INVOKABLE void loginUser(const QString& email, const QString& password);
     void checkSavedTokens();
+    void refreshTokens();
+    Q_INVOKABLE void logout();
 
 signals:
     void registrationSuccess();
     void registrationFailed(const QString& error);
     void loginSuccess();
     void loginFailed(const QString& error);
+    void tokenRefreshSuccess();
+    void tokenRefreshNeeded();
+    void tokenRefreshFailed();
+    void authRequired();
+    void loggedOut();
 
 private slots:
+    // Исправлено: добавлен параметр QNetworkReply*
     void onRegistrationFinished(QNetworkReply* reply);
     void onLoginFinished(QNetworkReply* reply);
+    void onRefreshFinished(QNetworkReply* reply);
 
 private:
-    void saveTokens(const QString& authToken, const QString& refreshToken);
-    QString getAuthToken();
+    struct TokenData {
+        QString authToken;
+        QString refreshToken;
+        QDateTime authExpiry;
+        QDateTime refreshExpiry;
+
+
+        bool isAuthValid() const {
+            qDebug() << authExpiry <<  authExpiry.toUTC() <<  QDateTime::currentDateTime() << QDateTime::currentDateTimeUtc();
+            return !authToken.isEmpty() && authExpiry.isValid() && authExpiry > QDateTime::currentDateTime();
+        }
+
+        bool isRefreshValid() const {
+            return !refreshToken.isEmpty() && refreshExpiry.isValid() && refreshExpiry > QDateTime::currentDateTimeUtc();
+        }
+
+        void clear() {
+            authToken.clear();
+            refreshToken.clear();
+            authExpiry = QDateTime();
+            refreshExpiry = QDateTime();
+        }
+    };
+
+    void saveTokens(const QString& authToken, const QString& refreshToken,
+                    const QDateTime& authExpiry, const QDateTime& refreshExpiry);
+    void clearTokens();
+    QDateTime parseDateTime(const QString& dateTimeStr);
 
     QNetworkAccessManager* networkManager_;
-    QString m_authToken;
+    TokenData m_tokenData;
+    bool m_isInitialAuth;
+
+    void sendRequestInternal(const QUrl& url, HttpMethod method,
+                             QObject* receiver, const char* replySlot,
+                             const QJsonObject& body,
+                             bool needsAuth,
+                             const QVariant& userData,
+                             int retryCount);
 };
 
 #endif // NETWORKMANAGER_H

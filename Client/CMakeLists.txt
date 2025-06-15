@@ -43,11 +43,24 @@ qt_add_qml_module(appClient.Components
     OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Client/Components
     RESOURCES
     QML_FILES
-    QML_FILES qml/Components/PostList.qml
-    QML_FILES qml/Components/PostHeader.qml
-    QML_FILES qml/Components/Post.qml
+    QML_FILES
+    QML_FILES
+    QML_FILES
     QML_FILES qml/Components/Avatar.qml
+    QML_FILES
+    QML_FILES
+    QML_FILES
+    QML_FILES
+    QML_FILES qml/Components/PostHeader.qml
+    QML_FILES qml/Components/PostList.qml
+    QML_FILES qml/Components/Post.qml
     QML_FILES qml/Components/ImagePreview.qml
+    QML_FILES
+    QML_FILES
+    QML_FILES
+    QML_FILES qml/Components/ConfirmDeleteDialog.qml
+    QML_FILES qml/Components/EditPostDialog.qml
+    QML_FILES qml/Components/AddPostButton.qml
 
 
 )
@@ -73,8 +86,11 @@ qt_add_qml_module(appClient
     VERSION 1.0
     SOURCES  NetworkManager.h
     SOURCES
-    SOURCES ProfileLoader.cpp
-    SOURCES ProfileLoader.h
+    SOURCES
+    SOURCES
+    SOURCES PostManager.h
+    SOURCES PostManager.cpp
+    SOURCES PostData.h
 
 
 )

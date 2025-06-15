@@ -20,7 +20,9 @@ Window {
     color: "#1A1A2E"
     flags: Qt.Window | Qt.FramelessWindowHint
 
+
     property var userData: ({
+        "userId": 1,
         "firstName": "Arnak",
         "lastName": "Hovsepyan",
         "username": "ARHov",
@@ -78,7 +80,15 @@ Window {
         Button {
             Layout.alignment: Qt.AlignHCenter
             text: "Мои посты"
-            onClicked: postsPage.visible = true
+            onClicked:
+            {
+
+                postsPage.visible = true
+                if (postManager)
+                {
+                    postManager.loadPosts(userData["userId"]);
+                }
+            }
 
             background: Rectangle {
                 radius: 18

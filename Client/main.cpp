@@ -3,7 +3,8 @@
 #include <QQuickStyle>
 #include <QQmlContext>
 #include "NetworkManager.h"
-#include "ProfileLoader.h"
+#include "PostManager.h"
+#include "PostData.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,18 +15,23 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    NetworkManager networkManager;
+    NetworkManager* networkManager = new NetworkManager(&app);
+    PostManager* postManager = new PostManager(networkManager, &app);
 
-    engine.rootContext()->setContextProperty("networkManager",  &networkManager);
 
-    // Регистрируем наш новый класс как тип, чтобы QML мог создавать его экземпляры
-    qmlRegisterType<ProfileLoader>("Client", 1, 0, "ProfileLoader");
+    qRegisterMetaType<PostData>("PostData");
+    qRegisterMetaType<QVector<PostData>>("QVector<PostData>");
+
+    engine.rootContext()->setContextProperty("networkManager", networkManager);
+    engine.rootContext()->setContextProperty("postManager", postManager);
+
+
 
     QQuickStyle::setStyle("Fusion");
 
     engine.loadFromModule("Client.Pages", "Main");
 
-    networkManager.checkSavedTokens();
+    (*networkManager).checkSavedTokens();
 
     return app.exec();
 }
