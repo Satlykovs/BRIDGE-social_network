@@ -266,3 +266,4 @@ Rectangle {
         id: imagePreview
     }
 }
+

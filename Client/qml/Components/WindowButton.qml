@@ -40,3 +40,4 @@ Rectangle {
     // Плавный переход цвета
     Behavior on color { ColorAnimation { duration: 150 } }
 }
+
