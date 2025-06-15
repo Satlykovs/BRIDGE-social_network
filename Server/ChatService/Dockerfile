@@ -1,0 +1,12 @@
+FROM ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
+
+RUN sudo apt update && sudo apt install -y clang-format
+
+WORKDIR /app
+COPY . .
+
+RUN cmake -B build && cd build &&\
+    cmake --build . -- -j$(nproc) && cd ..
+
+
+CMD ["./build/chat_service", "--config", "./configs/static_config.yaml"]

@@ -1,7 +1,6 @@
-config_vars*
 secdist*
 build
-.vscodeconfig_vars*
+config_vars*
 secdist*
 build
 .vscode

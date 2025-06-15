@@ -1,0 +1,65 @@
+components:
+  schemas:
+    MessageInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/MessageId'
+        conversation_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/ConversationId'
+        sender_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/UserId'
+        content:
+          type: string 
+        reply_to_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/MessageId'
+        sent_at:
+          type: string
+          format: date-time
+        edited_at:
+          type: string
+          format: date-time
+      required: 
+        - id
+        - conversation_id
+        - sender_id
+        - sent_at
+
+    SendMessageRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        content:
+          type: string
+          description: Текст сообщения.
+          minLength: 1 
+        reply_to_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/MessageId'
+      required:
+        - content
+
+    GetMessagesRequestParams:
+      type: object
+      additionalProperties: false
+      properties:
+        limit:
+          type: integer
+          format: int32
+          default: 50
+          minimum: 1
+          maximum: 100
+        before_message_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/MessageId'
+          
+
+    UpdateMessageRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        content:
+          type: string
+          description: Новый текст сообщения.
+          minLength: 1
+      required:
+        - content

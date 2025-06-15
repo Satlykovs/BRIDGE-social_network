@@ -1,0 +1,42 @@
+services:
+  chat_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: chatdatabase
+    hostname: chat-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d chatdatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./sql/init-scripts:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+
+  chat_service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      chat_db:
+        condition: service_healthy
+    hostname: chat-service
+    ports:
+      - 8080:8080
+
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    hostname: host-pgadmin  
+    ports:
+      - "5050:80"
+    depends_on:
+      - chat_db
+
+volumes:
+  postgres_data:
