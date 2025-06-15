@@ -24,7 +24,8 @@ namespace friendship_service{
         const auto user_data = request_json.As<friendship_service::models::FriendListDTO>();
         try
         {
-            return FriendshipManager_.TryBuildFriendsListResponse(user_data);
+            int CurrentUserID = context.GetData<int>("user_id");
+            return FriendshipManager_.TryBuildFriendsListResponse(user_data,CurrentUserID);
         }
         catch(const std::invalid_argument& e)
         {
@@ -49,7 +50,8 @@ namespace friendship_service{
         const auto user_data = request_json.As<friendship_service::models::FriendToActionDTO>();
 
         try{
-            return FriendshipManager_.TryGetFriendshipStatus(user_data);
+            int CurrentUserID = context.GetData<int>("user_id");
+            return FriendshipManager_.TryGetFriendshipStatus(user_data,CurrentUserID);
         }
         catch(const std::exception& e){
             throw userver::server::handlers::InternalServerError(userver::server::handlers::ExternalBody{fmt::format("Failed while getting friendship status: {}", e.what())});
@@ -69,7 +71,8 @@ namespace friendship_service{
         const auto user_data = request_json.As<friendship_service::models::FriendToActionDTO>();
 
         try{
-            return FriendshipManager_.TryRemoveFriend(user_data);
+            int CurrentUserID = context.GetData<int>("user_id");
+            return FriendshipManager_.TryRemoveFriend(user_data,CurrentUserID);
         }
         catch(const std::exception& e){
             throw userver::server::handlers::InternalServerError(userver::server::handlers::ExternalBody{fmt::format("Failed while removing friend: {}", e.what())});
@@ -89,7 +92,8 @@ namespace friendship_service{
         const auto user_data = request_json.As<friendship_service::models::FriendToActionDTO>();
 
         try{
-            return FriendshipManager_.TryRevokeFriendshipRequest(user_data);
+            int CurrentUserID = context.GetData<int>("user_id");
+            return FriendshipManager_.TryRevokeFriendshipRequest(user_data,CurrentUserID);
         }
         catch(const std::exception& e){
             throw userver::server::handlers::InternalServerError(userver::server::handlers::ExternalBody{fmt::format("Failed while revoking friendship request: {}", e.what())});
@@ -109,7 +113,8 @@ namespace friendship_service{
         const auto user_data = request_json.As<friendship_service::models::FriendToActionDTO>();
 
         try{
-            return FriendshipManager_.TrySendFriendshipRequest(user_data);
+            int CurrentUserID = context.GetData<int>("user_id");
+            return FriendshipManager_.TrySendFriendshipRequest(user_data,CurrentUserID);
         }
         catch(const std::invalid_argument& e){
             throw userver::server::handlers::ClientError(userver::server::handlers::ExternalBody{fmt::format("Failed while sending friend request: {}", e.what())});
@@ -132,7 +137,8 @@ namespace friendship_service{
         const auto user_data = request_json.As<friendship_service::models::DecisionFriendRequestDTO>();
 
         try{
-            return FriendshipManager_.TryUpdateFriendRequestStatus(user_data);
+            int CurrentUserID = context.GetData<int>("user_id");
+            return FriendshipManager_.TryUpdateFriendRequestStatus(user_data,CurrentUserID);
         }
         catch(const std::exception& e){
             throw userver::server::handlers::InternalServerError(userver::server::handlers::ExternalBody{fmt::format("Failed while setting friend request decision: {}", e.what())});

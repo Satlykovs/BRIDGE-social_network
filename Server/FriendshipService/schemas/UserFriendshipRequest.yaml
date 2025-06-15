@@ -5,9 +5,9 @@ components:
       type: object
       additionalProperties: false
       properties:
-        currentUserID:
-          type: integer
-          description: 'ID текущего пользователя'
+        # currentUserID:
+        #   type: integer
+        #   description: 'ID текущего пользователя'
         friendListType:
           type: string
           description: |
@@ -16,7 +16,7 @@ components:
             - ReceivedFriendRequestsList — входящие заявки
             - SentFriendRequestsList — исходящие заявки
       required:
-        - currentUserID
+        # - currentUserID
         - friendListType
       description: 'Фильтр для получения разных типов списка дружбы'
 
@@ -27,15 +27,15 @@ components:
         senderID:
           type: integer
           description: 'ID of the sender of the friend request'
-        currentUserID:
-          type: integer
-          description: 'ID of the receiver of the friend request'
+        # currentUserID:
+        #   type: integer
+        #   description: 'ID of the receiver of the friend request'
         decision:
           type: boolean
           description: 'decision on friendship request'
       required:
         - senderID
-        - currentUserID
+        # - currentUserID
         - decision
       description: 'DTO для принятия/отклонения запроса в друзья'
     
@@ -43,14 +43,14 @@ components:
       type: object
       additionalProperties: false
       properties:
-        currentUserID:
-          type: integer
-          description: 'user ID'
+        # currentUserID:
+        #   type: integer
+        #   description: 'user ID'
         friendToActionID:
           type: integer
           description: 'user ID to action'
       required:
-        - currentUserID
+        # - currentUserID
         - friendToActionID
       description: 'DTO которая нужна для получения id пользователя и пользователя, с которым надо что-то сделать'
 
