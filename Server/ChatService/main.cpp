@@ -17,13 +17,15 @@
 #include "include/Handlers/Http/UpdateConversationHandler.hpp" 
 #include "include/Handlers/Http/GetConversationDetailsHandler.hpp" 
 
+#include <JwtMiddleware.hpp>
+
 int main(int argc, char* argv[]) {
     auto component_list =
         userver::components::MinimalServerComponentList()
             .Append<userver::components::TestsuiteSupport>()
             .Append<userver::clients::dns::Component>()
             .Append<userver::components::Postgres>("chat-db") 
-
+            .Append<jwt_middleware::JwtMiddlewareFactory>()
             .Append<chat_service::http_handlers::CreateConversationHandler>()
             .Append<chat_service::http_handlers::ListConversationsHandler>()
             .Append<chat_service::http_handlers::SendMessageHandler>() 

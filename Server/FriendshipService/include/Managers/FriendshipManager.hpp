@@ -15,17 +15,17 @@ namespace friendship_service
 
             FriendshipManager(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
 
-            userver::formats::json::Value TryBuildFriendsListResponse(const friendship_service::models::FriendListDTO& user_data);
+            userver::formats::json::Value TryBuildFriendsListResponse(const friendship_service::models::FriendListDTO& user_data,int currentUserID);
 
-            userver::formats::json::Value TryGetFriendshipStatus(const friendship_service::models::FriendToActionDTO& user_data);
+            userver::formats::json::Value TryGetFriendshipStatus(const friendship_service::models::FriendToActionDTO& user_data,int currentUserID);
 
-            userver::formats::json::Value TryRemoveFriend(const friendship_service::models::FriendToActionDTO& user_data);
+            userver::formats::json::Value TryRemoveFriend(const friendship_service::models::FriendToActionDTO& user_data,int currentUserID);
 
-            userver::formats::json::Value TryRevokeFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data);
+            userver::formats::json::Value TryRevokeFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data,int currentUserID);
 
-            userver::formats::json::Value TrySendFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data);
+            userver::formats::json::Value TrySendFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data,int currentUserID);
 
-            userver::formats::json::Value TryUpdateFriendRequestStatus(const friendship_service::models::DecisionFriendRequestDTO& user_data);
+            userver::formats::json::Value TryUpdateFriendRequestStatus(const friendship_service::models::DecisionFriendRequestDTO& user_data,int currentUserID);
 
         private:
 

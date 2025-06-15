@@ -6,7 +6,7 @@
 #include "Controllers/FriendshipController.hpp"
 #include "Managers/FriendshipManager.hpp"
 #include "Repositories/FriendshipRepository.hpp"
-
+#include <JwtMiddleware.hpp>
 
 int main(int argc, char* argv[]){
 
@@ -15,6 +15,7 @@ int main(int argc, char* argv[]){
                             .Append<userver::clients::dns::Component>()
                             .Append<friendship_service::FriendshipRepository>()
                             .Append<friendship_service::FriendshipManager>()
+                            .Append<jwt_middleware::JwtMiddlewareFactory>()
                             .Append<userver::components::Postgres>("friendship-db");
     friendship_service::AddFriendshipController(component_list);
     return userver::utils::DaemonMain(argc, argv, component_list);

@@ -16,8 +16,8 @@ namespace friendship_service
     ) {}
 
 
-    userver::formats::json::Value FriendshipManager::TryBuildFriendsListResponse(const friendship_service::models::FriendListDTO& user_data){
-        int currentUserID = user_data.currentUserID;
+    userver::formats::json::Value FriendshipManager::TryBuildFriendsListResponse(const friendship_service::models::FriendListDTO& user_data,int currentUserID){
+        //int currentUserID = user_data.currentUserID;
         std::string friendListType = user_data.friendListType;
 
         userver::storages::postgres::ResultSet result = FriendshipRepository_.GetFriendsListQuery(currentUserID, friendListType);
@@ -33,8 +33,8 @@ namespace friendship_service
     }
 
 
-    userver::formats::json::Value FriendshipManager::TryGetFriendshipStatus(const friendship_service::models::FriendToActionDTO& user_data){
-        int currentUserID = user_data.currentUserID;
+    userver::formats::json::Value FriendshipManager::TryGetFriendshipStatus(const friendship_service::models::FriendToActionDTO& user_data,int currentUserID){
+        //int currentUserID = user_data.currentUserID;
         int friendToGetStatusID = user_data.friendToActionID;
 
         userver::storages::postgres::ResultSet result = FriendshipRepository_.FriendshipStatusQuery(currentUserID, friendToGetStatusID);
@@ -69,8 +69,8 @@ namespace friendship_service
     }
 
 
-    userver::formats::json::Value FriendshipManager::TryRemoveFriend (const friendship_service::models::FriendToActionDTO& user_data){
-        int currentUserID = user_data.currentUserID;
+    userver::formats::json::Value FriendshipManager::TryRemoveFriend (const friendship_service::models::FriendToActionDTO& user_data,int currentUserID){
+        //int currentUserID = user_data.currentUserID;
         int friendToRemoveID = user_data.friendToActionID;
 
         userver::storages::postgres::ResultSet result = FriendshipRepository_.RemoveFriendQuery(currentUserID, friendToRemoveID);
@@ -91,8 +91,8 @@ namespace friendship_service
     }
 
 
-    userver::formats::json::Value FriendshipManager::TryRevokeFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data){
-        int currentUserID = user_data.currentUserID;
+    userver::formats::json::Value FriendshipManager::TryRevokeFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data,int currentUserID){
+        //int currentUserID = user_data.currentUserID;
         int receiverID = user_data.friendToActionID;
 
         userver::storages::postgres::ResultSet result = FriendshipRepository_.RevokeFriendshipRequestQuery(currentUserID, receiverID); 
@@ -113,8 +113,8 @@ namespace friendship_service
     }
 
 
-    userver::formats::json::Value FriendshipManager::TrySendFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data){
-        int currentUserID = user_data.currentUserID;
+    userver::formats::json::Value FriendshipManager::TrySendFriendshipRequest(const friendship_service::models::FriendToActionDTO& user_data,int currentUserID){
+        //int currentUserID = user_data.currentUserID;
         int receiverID = user_data.friendToActionID;
 
         if (currentUserID==receiverID){
@@ -155,8 +155,8 @@ namespace friendship_service
     }
 
 
-    userver::formats::json::Value FriendshipManager::TryUpdateFriendRequestStatus(const friendship_service::models::DecisionFriendRequestDTO& user_data){
-        int currentUserID = user_data.currentUserID;
+    userver::formats::json::Value FriendshipManager::TryUpdateFriendRequestStatus(const friendship_service::models::DecisionFriendRequestDTO& user_data,int currentUserID){
+        //int currentUserID = user_data.currentUserID;
         int senderID = user_data.senderID;
         bool decision = user_data.decision;
 

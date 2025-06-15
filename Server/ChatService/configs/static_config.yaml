@@ -2,6 +2,10 @@ config_vars: ./configs/config_vars.yaml
 
 components_manager:
   components:
+
+    jwt-middleware:
+      secret-key: $j-secret-key
+
     server:
       listener:
         port: $server-port
@@ -18,7 +22,9 @@ components_manager:
       max_queue_size: 10000 
 
     
-    
+    default-server-middleware-pipeline-builder:
+      append:
+        - jwt-middleware
   
     testsuite-support: {}
 
@@ -26,62 +32,62 @@ components_manager:
             fs-task-processor: fs-task-processor
 
     create-conversation-handler:
-      path: /api/v1/chat/conversations
+      path: /chat/conversations
       method: POST
       task_processor: main-task-processor
 
     list-conversations-handler:
-      path: /api/v1/chat/conversations
+      path: /chat/conversations
       method: GET
       task_processor: main-task-processor
 
     send-message-handler:
-      path: /api/v1/chat/conversations/{conversation_id}/messages
+      path: /chat/conversations/{conversation_id}/messages
       method: POST
       task_processor: main-task-processor
 
     get-messages-handler:
-      path: /api/v1/chat/conversations/{conversation_id}/messages
+      path: /chat/conversations/{conversation_id}/messages
       method: GET
       task_processor: main-task-processor
 
     mark-as-read-handler:
-      path: /api/v1/chat/conversations/{conversation_id}/read
+      path: /chat/conversations/{conversation_id}/read
       method: POST
       task_processor: main-task-processor
 
     update-message-handler:
-      path: /api/v1/chat/messages/{message_id}
+      path: /chat/messages/{message_id}
       method: PUT
       task_processor: main-task-processor
 
     delete-message-handler:
-      path: /api/v1/chat/messages/{message_id}
+      path: /chat/messages/{message_id}
       method: DELETE
       task_processor: main-task-processor
 
     add-participant-handler:
-      path: /api/v1/chat/conversations/{conversation_id}/participants
+      path: /chat/conversations/{conversation_id}/participants
       method: POST
       task_processor: main-task-processor
 
     remove-participant-handler:
-      path: /api/v1/chat/conversations/{conversation_id}/participants/{user_id_to_remove} # ИЗМЕНЕН ПУТЬ
+      path: /chat/conversations/{conversation_id}/participants/{user_id_to_remove} # ИЗМЕНЕН ПУТЬ
       method: DELETE
       task_processor: main-task-processor
       
     leave-conversation-handler:
-      path: /api/v1/chat/conversations/{conversation_id}/leave
+      path: /chat/conversations/{conversation_id}/leave
       method: DELETE
       task_processor: main-task-processor
 
     update-conversation-handler:
-      path: /api/v1/chat/conversations/{conversation_id}
+      path: /chat/conversations/{conversation_id}
       method: PUT
       task_processor: main-task-processor
 
     get-conversation-details-handler:
-      path: /api/v1/chat/conversations/{conversation_id}
+      path: /chat/conversations/{conversation_id}
       method: GET
       task_processor: main-task-processor
     
