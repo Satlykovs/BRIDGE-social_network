@@ -1,0 +1,72 @@
+components:
+  schemas:
+    CreateConversationRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/ConversationType'
+        participant_user_ids:
+          type: array
+          items:
+            $ref: 'ChatCommonTypes.yaml#/components/schemas/UserId'
+          minItems: 1
+          description: Список ID пользователей-участников (кроме создателя)
+        title:
+          type: string
+          description: Название группового чата (обязательно для type='group', игнорируется для 'private')
+      required:
+        - type
+        - participant_user_ids
+       
+
+    ConversationInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/ConversationId'
+        type:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/ConversationType'
+        title:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        last_message_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/MessageId'
+      required:
+        - id
+        - type
+        - created_at
+        - updated_at
+        
+
+    UpdateConversationRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Новое название группового чата.
+      required:
+        - title
+
+    ConversationDetailsInfo:
+      allOf:
+        - $ref: '#/components/schemas/ConversationInfo'
+        - type: object
+          additionalProperties: false 
+          properties:
+            participants:
+              type: array
+              items:
+                $ref: 'ParticipantDTO.yaml#/components/schemas/ParticipantInfo' 
+              description: Список активных участников чата.
+          required: 
+             - participants

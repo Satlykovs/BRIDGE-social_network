@@ -1,0 +1,197 @@
+services:
+  user_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: userdatabase
+
+    command: postgres -c max_connections=350
+
+    hostname: user-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d userdatabase"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./init-scripts/user-db:/docker-entrypoint-initdb.d
+      - postgres_user_data:/var/lib/postgresql/data
+
+
+  post_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postdatabase
+
+    command: postgres -c max_connections=350
+
+    hostname: post-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d postdatabase"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./init-scripts/post-db:/docker-entrypoint-initdb.d
+      - postgres_post_data:/var/lib/postgresql/data
+
+  friendship_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: friendshipdatabase
+
+    command: postgres -c max_connections=350
+
+    hostname: friendship-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d friendshipdatabase"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./init-scripts/friend-db:/docker-entrypoint-initdb.d
+      - postgres_friend_data:/var/lib/postgresql/data
+
+  chat_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: chatdatabase
+
+    command: postgres -c max_connections=350
+
+
+    hostname: chat-db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d chatdatabase"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./init-scripts/chat-db:/docker-entrypoint-initdb.d
+      - postgres_chat_data:/var/lib/postgresql/data
+
+  auth_service:
+    build:
+      context: ./AuthService
+      dockerfile: Dockerfile
+    depends_on:
+      user_db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    hostname: auth-service
+    ports:
+      - 8080:8080
+  profile_service:
+    build:
+      context: ./ProfileService
+      dockerfile: Dockerfile
+    depends_on:
+      user_db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    hostname: profile-service
+    ports:
+      - 8081:8080
+
+  post_service:
+    build:
+      context: ./PostService
+      dockerfile: Dockerfile
+    depends_on:
+      post_db:
+        condition: service_healthy
+    hostname: post-service
+    ports:
+      - 8082:8080
+
+  chat_service:
+    build:
+      context: ./ChatService
+      dockerfile: Dockerfile
+    depends_on:
+      chat_db:
+        condition: service_healthy
+    hostname: chat-service
+    ports:
+      - 8083:8080
+
+
+
+
+  friendship_service:
+    build:
+      context: ./FriendshipService
+      dockerfile: Dockerfile
+    depends_on:
+      friendship_db:
+        condition: service_healthy
+    hostname: friendship-service
+    ports:
+      - 8084:8080
+
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'  
+    ports:
+      - 9092
+
+
+
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --list --bootstrap-server localhost:9092"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+    
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+    - 9090:8080
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      
+    hostname: host-pgadmin  
+    ports:
+      - 5050:80
+    depends_on:
+      - user_db
+
+volumes:
+  postgres_user_data:
+  postgres_post_data:
+  postgres_friend_data:
+  postgres_chat_data:

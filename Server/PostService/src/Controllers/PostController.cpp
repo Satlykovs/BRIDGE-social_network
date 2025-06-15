@@ -6,6 +6,9 @@
 #include <userver/http/content_type.hpp>
 #include <userver/http/status_code.hpp>
 #include <userver/storages/postgres/exceptions.hpp>
+#include <userver/server/http/http_response.hpp>
+#include <userver/http/content_type.hpp>
+#include <userver/server/http/http_request.hpp>
 
 namespace post_service::controllers
 {
@@ -73,7 +76,8 @@ namespace post_service::controllers
 		{
 			request.GetHttpResponse().SetStatus(
 				userver::server::http::HttpStatus::kBadRequest);
-			return "Expected 'multipart/form-data' content type";
+			throw userver::server::handlers::ClientError(
+				userver::server::handlers::ExternalBody{"Expected 'multipart/form-data' content type"});
 		}
 
 		if (!request.HasFormDataArg("text"))
@@ -93,12 +97,14 @@ namespace post_service::controllers
 
 		try
 		{
-			postManager_.CreatePost(userId, text, image);
-			return {};
+			auto post = postManager_.CreatePost(userId, text, image);
+			auto& response = request.GetHttpResponse();
+			response.SetContentType("application/json");
+			return userver::formats::json::ToString(userver::formats::json::ValueBuilder(post).ExtractValue());
 		}
 		catch (const std::exception& e)
 		{
-			throw userver::server::handlers::InternalServerError();
+			throw userver::server::handlers::InternalServerError(userver::server::handlers::ExternalBody{e.what()});
 		}
 	}
 
@@ -112,7 +118,8 @@ namespace post_service::controllers
 		{
 			request.GetHttpResponse().SetStatus(
 				userver::server::http::HttpStatus::kBadRequest);
-			return "Expected 'multipart/form-data' content type";
+			throw userver::server::handlers::ClientError(
+				userver::server::handlers::ExternalBody{"Expected 'multipart/form-data' content type"});
 		}
 
 		if (!request.HasFormDataArg("text"))
@@ -133,8 +140,10 @@ namespace post_service::controllers
 
 		try
 		{
-			postManager_.UpdatePost(userId, postId, text, image);
-			return {};
+			auto post = postManager_.UpdatePost(userId, postId, text, image);
+			auto& response = request.GetHttpResponse();
+			response.SetContentType("application/json");
+			return userver::formats::json::ToString(userver::formats::json::ValueBuilder(post).ExtractValue());
 		}
 		catch (const std::exception& e)
 		{
@@ -151,7 +160,7 @@ namespace post_service::controllers
 		const int postId = std::stoi(request.GetPathArg("post_id"));
 
 		postManager_.DeletePost(userId, postId);
-		return {};
+		return userver::formats::json::MakeObject("post_id", postId);
 	}
 
 	userver::formats::json::Value ToggleLikeHandler::HandleRequestJsonThrow(
@@ -166,7 +175,7 @@ namespace post_service::controllers
 		userver::formats::json::ValueBuilder builder;
 
 		builder["count"] = res.first;
-		builder["i_liked"] = res.second;
+		builder["liked"] = res.second;
 
 		return builder.ExtractValue();
 	}
@@ -177,8 +186,9 @@ namespace post_service::controllers
 		userver::server::request::RequestContext& context) const
 	{
 		const int postId = std::stoi(request.GetPathArg("post_id"));
-
-		auto post = postManager_.GetPost(postId);
+		const int userId = context.GetData<int>("user_id");
+		
+		auto post = postManager_.GetPost(postId, userId);
 		return userver::formats::json::ValueBuilder(post).ExtractValue();
 	}
 
@@ -190,7 +200,7 @@ namespace post_service::controllers
 		const int userId = context.GetData<int>("user_id");
 		const int targetUserId = std::stoi(request.GetPathArg("user_id"));
 
-		auto posts = postManager_.GetUserPosts(targetUserId);
+		auto posts = postManager_.GetUserPosts(userId, targetUserId);
 
 		return userver::formats::json::ValueBuilder(posts).ExtractValue();
 	}

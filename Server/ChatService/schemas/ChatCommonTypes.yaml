@@ -1,0 +1,28 @@
+components:
+  schemas:
+    ConversationId:
+      type: integer
+      description: Уникальный ID диалога
+      
+    MessageId:
+      type: integer
+      format: int64
+      description: Уникальный ID сообщения
+      
+
+    UserId:
+      type: integer
+      format: int64
+      description: ID пользователя
+      
+
+    ConversationType:
+      type: string 
+      description: Тип диалога ('private' или 'group')
+     
+
+    ParticipantRole:
+      type: string 
+      description: Роль участника в чате
+      
+      

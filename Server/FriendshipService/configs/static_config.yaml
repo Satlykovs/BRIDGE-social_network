@@ -1,0 +1,74 @@
+config_vars: ./configs/config_vars.yaml
+
+components_manager:
+  components:
+    server:
+      listener:
+        port: $server-port
+        task_processor: main-task-processor
+    
+    friendship-db:
+      dbconnection: $db-path
+      blocking_task_processor: fs-task-processor
+      dns_resolver: async
+      sync-start: true
+      connlimit_mode: auto
+      min_pool_size: 50
+      max_pool_size: 1000
+      max_queue_size: 10000 
+
+    friendship-manager: {}
+    friendship-storage: {}
+    
+  
+    testsuite-support: {}
+
+    dns-client:
+            fs-task-processor: fs-task-processor
+
+    friend-list-by-type-handler:
+      path: /friendship/friendlistbytype
+      method: GET
+      task_processor: main-task-processor
+    get-status-friendship-relation-handler:
+      path: /friendship/getstatusfriendshiprelation
+      method: GET
+      task_processor: main-task-processor
+    remove-friend-handler:
+      path: /friendship/removefriend
+      method: DELETE
+      task_processor: main-task-processor
+    revoke-friendship-request-handler:
+      path: /friendship/revokefriendshiprequest
+      method: DELETE
+      task_processor: main-task-processor
+    send-friendship-request-handler:
+      path: /friendship/sendfriendshiprequest
+      method: PUT
+      task_processor: main-task-processor
+    friendship-request-decision-handler:
+      path: /friendship/friendshiprequestdecision
+      method: PATCH
+      task_processor: main-task-processor
+
+    logging:  
+      fs-task-processor: fs-task-processor
+      loggers:
+        default:
+          file_path: '@stdout'
+          level: $logger-level
+          format: ltsv
+
+  task_processors:
+    main-task-processor:
+      worker_threads: $worker-threads
+    fs-task-processor:  
+      worker_threads: $worker-fs-threads
+
+  default_task_processor: main-task-processor
+
+    
+
+
+    
+

@@ -1,0 +1,21 @@
+components:
+  schemas:
+    MarkAsReadRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        last_read_message_id:
+          $ref: 'ChatCommonTypes.yaml#/components/schemas/MessageId'
+      required:
+        - last_read_message_id
+
+    MarkAsReadResponse:
+        type: object
+        additionalProperties: false
+        properties:
+          status:
+            type: string
+            example: "success"
+          message:
+            type: string
+            example: "Conversation marked as read up to message X."

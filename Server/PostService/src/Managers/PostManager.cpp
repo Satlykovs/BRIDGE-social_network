@@ -22,7 +22,7 @@ namespace post_service::managers
 	{
 	}
 
-	void PostManager::CreatePost(int userId, const std::string& text,
+	post_service::models::Post PostManager::CreatePost(int userId, const std::string& text,
 								 std::optional<std::string>& image)
 	{
 		std::string fileUrl = "";
@@ -38,16 +38,16 @@ namespace post_service::managers
 			s3Client_->PutObject(objectKey, image.value());
 		}
 
-		postRepository_.CreatePost(userId, text, fileUrl);
+		return postRepository_.CreatePost(userId, text, fileUrl);
 	}
 
-	void PostManager::UpdatePost(int userId, int postId,
+	post_service::models::Post PostManager::UpdatePost(int userId, int postId,
 								 const std::string& text,
 								 std::optional<std::string>& image)
 	{
 		if (!postRepository_.FindPostById(postId))
 			throw std::runtime_error("POST NOT FOUND");
-		if (!ValidateOwner(postId, userId)) return;
+		if (!ValidateOwner(postId, userId)) throw std::runtime_error("DEPRECATED");
 
 		std::string fileUrl = "";
 		if (image.has_value())
@@ -62,14 +62,17 @@ namespace post_service::managers
 			s3Client_->PutObject(objectKey, image.value());
 		}
 
-		const std::string oldImageUrl =
+		auto data =
 			postRepository_.UpdatePost(userId, postId, text, fileUrl);
+		const std::string oldImageUrl = data.first;
 
 		if (oldImageUrl.size() > 0)
 		{
 			auto oldObjectKey = oldImageUrl.substr(baseUrl.size());
 			s3Client_->DeleteObject(oldObjectKey);
 		}
+
+		return data.second;
 	}
 
 	void PostManager::DeletePost(int userId, int postId)
@@ -102,9 +105,9 @@ namespace post_service::managers
 		}
 	}
 
-	post_service::models::Post PostManager::GetPost(int postId)
+	post_service::models::Post PostManager::GetPost(int postId,  int userId)
 	{
-		auto res = postRepository_.GetPost(postId);
+		auto res = postRepository_.GetPost(postId, userId);
 		if (res.has_value())
 			return res.value();
 		else
@@ -112,9 +115,9 @@ namespace post_service::managers
 	}
 
 	std::vector<post_service::models::Post> PostManager::GetUserPosts(
-		int userId)
+		int userId, int targetUserId)
 	{
-		auto res = postRepository_.GetPosts(userId);
+		auto res = postRepository_.GetPosts(userId, targetUserId);
 		if (res.has_value())
 			return res.value();
 		else

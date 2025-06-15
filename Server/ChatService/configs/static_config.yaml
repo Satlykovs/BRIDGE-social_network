@@ -1,0 +1,110 @@
+config_vars: ./configs/config_vars.yaml
+
+components_manager:
+  components:
+    server:
+      listener:
+        port: $server-port
+        task_processor: main-task-processor
+    
+    chat-db:
+      dbconnection: $db-path
+      blocking_task_processor: fs-task-processor
+      dns_resolver: async
+      sync-start: true
+      connlimit_mode: auto
+      min_pool_size: 50
+      max_pool_size: 1000
+      max_queue_size: 10000 
+
+    
+    
+  
+    testsuite-support: {}
+
+    dns-client:
+            fs-task-processor: fs-task-processor
+
+    create-conversation-handler: # Предполагается kName = "create-conversation-handler"
+      path: /api/v1/chat/conversations # ИЗМЕНЕН ПУТЬ (пример)
+      method: POST
+      task_processor: main-task-processor
+
+    list-conversations-handler: # kName = "list-conversations-handler"
+      path: /api/v1/chat/conversations # ИЗМЕНЕН ПУТЬ
+      method: GET
+      task_processor: main-task-processor # ДОБАВЛЕНО
+
+    send-message-handler: # kName = "send-message-handler" (или CreateMessageHandler)
+      path: /api/v1/chat/conversations/{conversation_id}/messages # ИЗМЕНЕН ПУТЬ
+      method: POST
+      task_processor: main-task-processor
+
+    get-messages-handler: # kName = "get-messages-handler" (или ListMessagesHandler)
+      path: /api/v1/chat/conversations/{conversation_id}/messages # ИЗМЕНЕН ПУТЬ
+      method: GET
+      task_processor: main-task-processor
+
+    mark-as-read-handler: # kName = "mark-as-read-handler"
+      path: /api/v1/chat/conversations/{conversation_id}/read # ИЗМЕНЕН ПУТЬ (добавлен префикс)
+      method: POST
+      task_processor: main-task-processor
+
+    update-message-handler: # kName = "update-message-handler"
+      path: /api/v1/chat/messages/{message_id} # ИЗМЕНЕН ПУТЬ (пример)
+      method: PUT
+      task_processor: main-task-processor
+
+    delete-message-handler: # kName = "delete-message-handler"
+      path: /api/v1/chat/messages/{message_id} # ИЗМЕНЕН ПУТЬ (пример)
+      method: DELETE
+      task_processor: main-task-processor
+
+    add-participant-handler: # kName = "add-participant-handler"
+      path: /api/v1/chat/conversations/{conversation_id}/participants # ИЗМЕНЕН ПУТЬ
+      method: POST
+      task_processor: main-task-processor
+
+    remove-participant-handler: # kName = "remove-participant-handler"
+      path: /api/v1/chat/conversations/{conversation_id}/participants/{user_id_to_remove} # ИЗМЕНЕН ПУТЬ
+      method: DELETE
+      task_processor: main-task-processor
+      
+    leave-conversation-handler: # kName = "leave-conversation-handler"
+      path: /api/v1/chat/conversations/{conversation_id}/leave # ИЗМЕНЕН ПУТЬ
+      method: DELETE
+      task_processor: main-task-processor
+
+    update-conversation-handler: # kName = "update-conversation-handler"
+      path: /api/v1/chat/conversations/{conversation_id} # ИЗМЕНЕН ПУТЬ
+      method: PUT
+      task_processor: main-task-processor
+
+    get-conversation-details-handler: # kName = "get-conversation-details-handler"
+      path: /api/v1/chat/conversations/{conversation_id} # ИЗМЕНЕН ПУТЬ
+      method: GET
+      task_processor: main-task-processor
+    # --- Конец Хендлеров Чата ---
+
+
+    logging:  
+      fs-task-processor: fs-task-processor
+      loggers:
+        default:
+          file_path: '@stdout'
+          level: $logger-level
+          format: ltsv
+
+  task_processors:
+    main-task-processor:
+      worker_threads: $worker-threads
+    fs-task-processor:  
+      worker_threads: $worker-fs-threads
+
+  default_task_processor: main-task-processor
+
+    
+
+
+    
+

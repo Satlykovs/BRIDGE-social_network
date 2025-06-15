@@ -21,23 +21,27 @@ namespace post_service::repositories
 	{
 	}
 
-	void PostRepository::CreatePost(int userId, const std::string& text,
+	post_service::models::Post PostRepository::CreatePost(int userId, const std::string& text,
 									const std::string& fileUrl)
 	{
-		pgCluster_->Execute(
+		auto res = pgCluster_->Execute(
 			userver::storages::postgres::ClusterHostType::kMaster,
 			sql_queries::sql::kCreatePost, userId, text, fileUrl);
+		return Parser(res[0]);
+		
 	}
 
-	std::string PostRepository::UpdatePost(int userId, int postId,
+	std::pair<std::string, post_service::models::Post> PostRepository::UpdatePost(int userId, int postId,
 										   const std::string& text,
 										   const std::string& fileUrl)
 	{
-		return pgCluster_
+		auto res = pgCluster_
 			->Execute(userver::storages::postgres::ClusterHostType::kMaster,
 					  sql_queries::sql::kUpdatePost, postId, userId, text,
-					  fileUrl)
-			.AsSingleRow<std::string>();
+					  fileUrl);
+		auto post = Parser(res[0]);
+
+		return std::make_pair(res[0]["old_image_url"].As<std::string>(), post);
 	}
 
 	std::string PostRepository::DeletePost(int userId, int postId)
@@ -88,11 +92,11 @@ namespace post_service::repositories
 	}
 
 	std::optional<post_service::models::Post> PostRepository::GetPost(
-		int postId)
+		int postId, int userId)
 	{
 		auto res = pgCluster_->Execute(
 			userver::storages::postgres::ClusterHostType::kSlave,
-			sql_queries::sql::kGetPost, postId);
+			sql_queries::sql::kGetPost, postId, userId);
 
 		if (res.IsEmpty()) return std::nullopt;
 
@@ -100,11 +104,11 @@ namespace post_service::repositories
 	}
 
 	std::optional<std::vector<post_service::models::Post>>
-	PostRepository::GetPosts(int userId)
+	PostRepository::GetPosts(int userId, int targetUserId)
 	{
 		auto res = pgCluster_->Execute(
 			userver::storages::postgres::ClusterHostType::kSlave,
-			sql_queries::sql::kFindUserPosts, userId);
+			sql_queries::sql::kFindUserPosts, userId, targetUserId);
 
 		if (res.IsEmpty()) return std::nullopt;
 
@@ -125,12 +129,15 @@ namespace post_service::repositories
 		post.postId = row["post_id"].As<std::optional<int>>();
 		post.userId = row["user_id"].As<std::optional<int>>();
 		post.text = row["post_text"].As<std::optional<std::string>>();
-		post.image_url = row["image_url"].As<std::optional<std::string>>();
-		post.likes_count = row["likes_count"].As<std::optional<int>>();
-		post.created_at = std::optional<userver::utils::datetime::TimePointTz>(
+		post.imageUrl = row["image_url"].As<std::optional<std::string>>();
+		post.likesCount = row["likes_count"].As<std::optional<int>>();
+		post.createdAt = std::optional<userver::utils::datetime::TimePointTz>(
 			row["created_at"]
 				.As<userver::storages::postgres::TimePointTz>()
 				.GetUnderlying());
+		post.liked = row["liked"].As<bool>();
+		post.isMine = row["is_mine"].As<bool>();
+		
 
 		return post;
 	}

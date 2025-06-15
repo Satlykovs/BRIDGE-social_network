@@ -1,0 +1,17 @@
+BasedOnStyle: Google
+
+BreakBeforeBraces: Allman
+
+
+PointerAlignment: Left
+DerivePointerAlignment: false
+
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 1
+
+
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+NamespaceIndentation: All
+
