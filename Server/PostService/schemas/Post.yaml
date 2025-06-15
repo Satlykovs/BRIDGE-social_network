@@ -1,0 +1,34 @@
+components:
+  schemas:
+    Post:
+      type: object
+      additionalProperties: false
+      properties:
+        postId:
+          type: integer
+        userId:
+          type: integer
+        text:
+          type: string
+        imageUrl:
+          type: string
+        likesCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        liked:
+          type: boolean
+        isMine:
+          type: boolean
+          
+          
+          
+        
+    
+
+
+
+
+
+    

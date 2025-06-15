@@ -1,0 +1,1 @@
+SELECT EXISTS(SELECT 1 FROM posts WHERE post_id = $1) AS post_exists;
