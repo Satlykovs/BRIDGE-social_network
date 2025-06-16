@@ -5,30 +5,32 @@
 #include <userver/server/handlers/http_handler_json_base.hpp>
 #include <userver/storages/postgres/cluster.hpp>
 
-namespace chat_service::http_handlers {
+namespace chat_service::http_handlers
+{
 
-class MarkAsReadHandler final
-    : public userver::server::handlers::HttpHandlerJsonBase {
-public:
-  static constexpr std::string_view kName = "mark-as-read-handler";
+	class MarkAsReadHandler final
+		: public userver::server::handlers::HttpHandlerJsonBase
+	{
+	   public:
+		static constexpr std::string_view kName = "mark-as-read-handler";
 
-  MarkAsReadHandler(const userver::components::ComponentConfig &config,
-                    const userver::components::ComponentContext &context);
+		MarkAsReadHandler(const userver::components::ComponentConfig& config,
+						  const userver::components::ComponentContext& context);
 
-  using RequestType = userver::formats::json::Value;
-  using ResponseType = userver::formats::json::Value;
+		using RequestType = userver::formats::json::Value;
+		using ResponseType = userver::formats::json::Value;
 
-  ResponseType HandleRequestJsonThrow(
-      const userver::server::http::HttpRequest &http_request,
-      const RequestType &request_json,
-      userver::server::request::RequestContext &context) const override;
+		ResponseType HandleRequestJsonThrow(
+			const userver::server::http::HttpRequest& http_request,
+			const RequestType& request_json,
+			userver::server::request::RequestContext& context) const override;
 
-private:
-  userver::storages::postgres::ClusterPtr pg_cluster_;
+	   private:
+		userver::storages::postgres::ClusterPtr pg_cluster_;
 
-  bool IsUserParticipant(int conversation_id, int64_t user_id) const;
-  bool IsValidMessageInConversation(int64_t message_id,
-                                    int conversation_id) const;
-};
+		bool IsUserParticipant(int conversation_id, int64_t user_id) const;
+		bool IsValidMessageInConversation(int64_t message_id,
+										  int conversation_id) const;
+	};
 
 } // namespace chat_service::http_handlers

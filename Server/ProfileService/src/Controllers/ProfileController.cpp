@@ -105,19 +105,24 @@ namespace profile_service::controllers
 		}
 	}
 
-
-
-	OtherUserInfoHandler::OtherUserInfoHandler(const userver::components::ComponentConfig& config,
-					const userver::components::ComponentContext& context)  : HttpHandlerJsonBase(config, context),
+	OtherUserInfoHandler::OtherUserInfoHandler(
+		const userver::components::ComponentConfig& config,
+		const userver::components::ComponentContext& context)
+		: HttpHandlerJsonBase(config, context),
 		  profileManager_(
 			  context
-				  .FindComponent<profile_service::managers::ProfileManager>()) {}
+				  .FindComponent<profile_service::managers::ProfileManager>())
+	{
+	}
 
 	userver::formats::json::Value OtherUserInfoHandler::HandleRequestJsonThrow(
 		const userver::server::http::HttpRequest& request,
 		const userver::formats::json::Value& requestJson,
 		userver::server::request::RequestContext& context) const
-		{
-			return userver::formats::json::ValueBuilder(profileManager_.GetInfo(std::stoi(request.GetPathArg("id"))).value()).ExtractValue();
-		}
+	{
+		return userver::formats::json::ValueBuilder(
+				   profileManager_.GetInfo(std::stoi(request.GetPathArg("id")))
+					   .value())
+			.ExtractValue();
+	}
 } // namespace profile_service::controllers

@@ -5,36 +5,39 @@
 #include <userver/server/handlers/http_handler_json_base.hpp>
 #include <userver/storages/postgres/cluster.hpp>
 
-namespace chat_service::http_handlers {
+namespace chat_service::http_handlers
+{
 
-class UpdateConversationHandler final
-    : public userver::server::handlers::HttpHandlerJsonBase {
-public:
-  static constexpr std::string_view kName = "update-conversation-handler";
+	class UpdateConversationHandler final
+		: public userver::server::handlers::HttpHandlerJsonBase
+	{
+	   public:
+		static constexpr std::string_view kName = "update-conversation-handler";
 
-  UpdateConversationHandler(
-      const userver::components::ComponentConfig &config,
-      const userver::components::ComponentContext &context);
+		UpdateConversationHandler(
+			const userver::components::ComponentConfig& config,
+			const userver::components::ComponentContext& context);
 
-  using RequestType = userver::formats::json::Value;
-  using ResponseType = userver::formats::json::Value;
+		using RequestType = userver::formats::json::Value;
+		using ResponseType = userver::formats::json::Value;
 
-  ResponseType HandleRequestJsonThrow(
-      const userver::server::http::HttpRequest &http_request,
-      const RequestType &request_json,
-      userver::server::request::RequestContext &context) const override;
+		ResponseType HandleRequestJsonThrow(
+			const userver::server::http::HttpRequest& http_request,
+			const RequestType& request_json,
+			userver::server::request::RequestContext& context) const override;
 
-private:
-  userver::storages::postgres::ClusterPtr pg_cluster_;
+	   private:
+		userver::storages::postgres::ClusterPtr pg_cluster_;
 
-  struct ConversationUpdateCheckDetails {
-    bool conversation_exists_and_active_participant;
-    std::string conversation_type_str;
-    bool current_user_is_admin;
-  };
+		struct ConversationUpdateCheckDetails
+		{
+			bool conversation_exists_and_active_participant;
+			std::string conversation_type_str;
+			bool current_user_is_admin;
+		};
 
-  ConversationUpdateCheckDetails
-  CheckPermissionsForUpdate(int conversation_id, int64_t current_user_id) const;
-};
+		ConversationUpdateCheckDetails CheckPermissionsForUpdate(
+			int conversation_id, int64_t current_user_id) const;
+	};
 
 } // namespace chat_service::http_handlers
