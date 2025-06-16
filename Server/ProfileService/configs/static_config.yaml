@@ -52,6 +52,11 @@ components_manager:
       path: /profile
       method: GET,POST
       task_processor: main-task-processor
+
+    other-user-info-handler:
+      path: /profile/{id}
+      method: GET
+      task_processor: main-task-processor
     
     logging:  
       fs-task-processor: fs-task-processor

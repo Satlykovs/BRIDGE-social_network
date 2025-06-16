@@ -48,6 +48,23 @@ namespace profile_service::controllers
 		profile_service::managers::ProfileManager& profileManager_;
 	};
 
+	class OtherUserInfoHandler final : public userver::server::handlers::HttpHandlerJsonBase
+	{
+		public:
+			static constexpr std::string_view kName  = "other-user-info-handler";
+
+			OtherUserInfoHandler(const userver::components::ComponentConfig& config,
+					const userver::components::ComponentContext& context);
+
+			userver::formats::json::Value HandleRequestJsonThrow(
+			const userver::server::http::HttpRequest& request,
+			const userver::formats::json::Value& requestJson,
+			userver::server::request::RequestContext& context) const override;
+			
+		private:
+			profile_service::managers::ProfileManager& profileManager_;
+	};
+
 } // namespace profile_service::controllers
 
 #endif
