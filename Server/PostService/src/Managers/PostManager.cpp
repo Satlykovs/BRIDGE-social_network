@@ -22,8 +22,8 @@ namespace post_service::managers
 	{
 	}
 
-	post_service::models::Post PostManager::CreatePost(int userId, const std::string& text,
-								 std::optional<std::string>& image)
+	post_service::models::Post PostManager::CreatePost(
+		int userId, const std::string& text, std::optional<std::string>& image)
 	{
 		std::string fileUrl = "";
 		if (image.has_value())
@@ -41,13 +41,14 @@ namespace post_service::managers
 		return postRepository_.CreatePost(userId, text, fileUrl);
 	}
 
-	post_service::models::Post PostManager::UpdatePost(int userId, int postId,
-								 const std::string& text,
-								 std::optional<std::string>& image)
+	post_service::models::Post PostManager::UpdatePost(
+		int userId, int postId, const std::string& text,
+		std::optional<std::string>& image)
 	{
 		if (!postRepository_.FindPostById(postId))
 			throw std::runtime_error("POST NOT FOUND");
-		if (!ValidateOwner(postId, userId)) throw std::runtime_error("DEPRECATED");
+		if (!ValidateOwner(postId, userId))
+			throw std::runtime_error("DEPRECATED");
 
 		std::string fileUrl = "";
 		if (image.has_value())
@@ -62,8 +63,7 @@ namespace post_service::managers
 			s3Client_->PutObject(objectKey, image.value());
 		}
 
-		auto data =
-			postRepository_.UpdatePost(userId, postId, text, fileUrl);
+		auto data = postRepository_.UpdatePost(userId, postId, text, fileUrl);
 		const std::string oldImageUrl = data.first;
 
 		if (oldImageUrl.size() > 0)
@@ -105,7 +105,7 @@ namespace post_service::managers
 		}
 	}
 
-	post_service::models::Post PostManager::GetPost(int postId,  int userId)
+	post_service::models::Post PostManager::GetPost(int postId, int userId)
 	{
 		auto res = postRepository_.GetPost(postId, userId);
 		if (res.has_value())

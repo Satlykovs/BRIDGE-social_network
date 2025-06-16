@@ -17,14 +17,17 @@ namespace post_service::managers
 		PostManager(const userver::components::ComponentConfig& config,
 					const userver::components::ComponentContext& context);
 
-		post_service::models::Post CreatePost(int userId, const std::string& text,
-						std::optional<std::string>& image);
-		post_service::models::Post UpdatePost(int userId, int postId, const std::string& text,
-						std::optional<std::string>& image);
+		post_service::models::Post CreatePost(
+			int userId, const std::string& text,
+			std::optional<std::string>& image);
+		post_service::models::Post UpdatePost(
+			int userId, int postId, const std::string& text,
+			std::optional<std::string>& image);
 		void DeletePost(int userId, int postId);
 		std::pair<int, bool> ToggleLike(int userId, int postId);
 		post_service::models::Post GetPost(int postId, int userId);
-		std::vector<post_service::models::Post> GetUserPosts(int userId, int targetUserId);
+		std::vector<post_service::models::Post> GetUserPosts(int userId,
+															 int targetUserId);
 
 	   private:
 		userver::s3api::ClientPtr s3Client_;

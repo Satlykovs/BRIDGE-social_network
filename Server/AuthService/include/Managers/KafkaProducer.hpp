@@ -13,12 +13,14 @@
 //         public:
 //             static constexpr std::string_view kName = "producer";
 
-//             Producer(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
+//             Producer(const userver::components::ComponentConfig& config,
+//             const userver::components::ComponentContext& context);
 
-//             auth_service::models::SendStatus Produce(const auth_service::models::RequestMessage& message);
+//             auth_service::models::SendStatus Produce(const
+//             auth_service::models::RequestMessage& message);
 //         private:
 //             const userver::kafka::Producer& kafkaProducer_;
-            
+
 //     };
 // }
 // #endif

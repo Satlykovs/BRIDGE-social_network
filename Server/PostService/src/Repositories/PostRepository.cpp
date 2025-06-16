@@ -21,24 +21,22 @@ namespace post_service::repositories
 	{
 	}
 
-	post_service::models::Post PostRepository::CreatePost(int userId, const std::string& text,
-									const std::string& fileUrl)
+	post_service::models::Post PostRepository::CreatePost(
+		int userId, const std::string& text, const std::string& fileUrl)
 	{
 		auto res = pgCluster_->Execute(
 			userver::storages::postgres::ClusterHostType::kMaster,
 			sql_queries::sql::kCreatePost, userId, text, fileUrl);
 		return Parser(res[0]);
-		
 	}
 
-	std::pair<std::string, post_service::models::Post> PostRepository::UpdatePost(int userId, int postId,
-										   const std::string& text,
-										   const std::string& fileUrl)
+	std::pair<std::string, post_service::models::Post>
+	PostRepository::UpdatePost(int userId, int postId, const std::string& text,
+							   const std::string& fileUrl)
 	{
-		auto res = pgCluster_
-			->Execute(userver::storages::postgres::ClusterHostType::kMaster,
-					  sql_queries::sql::kUpdatePost, postId, userId, text,
-					  fileUrl);
+		auto res = pgCluster_->Execute(
+			userver::storages::postgres::ClusterHostType::kMaster,
+			sql_queries::sql::kUpdatePost, postId, userId, text, fileUrl);
 		auto post = Parser(res[0]);
 
 		return std::make_pair(res[0]["old_image_url"].As<std::string>(), post);
@@ -137,7 +135,6 @@ namespace post_service::repositories
 				.GetUnderlying());
 		post.liked = row["liked"].As<bool>();
 		post.isMine = row["is_mine"].As<bool>();
-		
 
 		return post;
 	}

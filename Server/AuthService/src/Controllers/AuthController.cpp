@@ -14,7 +14,8 @@ namespace auth_service::controllers
 		const userver::components::ComponentConfig& config,
 		const userver::components::ComponentContext& context)
 		: HttpHandlerJsonBase(config, context),
-		  authManager_(context.FindComponent<auth_service::managers::AuthManager>())
+		  authManager_(
+			  context.FindComponent<auth_service::managers::AuthManager>())
 	{
 	}
 
@@ -29,16 +30,16 @@ namespace auth_service::controllers
 		{
 			authManager_.RegisterUser(userData);
 
-				return userver::formats::json::MakeObject(
-					"message", fmt::format("User '{}' registered successfully",
-										   userData.email));
-			
+			return userver::formats::json::MakeObject(
+				"message", fmt::format("User '{}' registered successfully",
+									   userData.email));
 		}
 		catch (const std::exception& e)
 		{
 			throw userver::server::handlers::ClientError(
 				userver::server::handlers::ExternalBody{
-					fmt::format("User with email '{}' already exists or something else went wrong",
+					fmt::format("User with email '{}' already exists or "
+								"something else went wrong",
 								userData.email)});
 		}
 	}
@@ -47,7 +48,8 @@ namespace auth_service::controllers
 		const userver::components::ComponentConfig& config,
 		const userver::components::ComponentContext& context)
 		: HttpHandlerJsonBase(config, context),
-		  authManager_(context.FindComponent<auth_service::managers::AuthManager>())
+		  authManager_(
+			  context.FindComponent<auth_service::managers::AuthManager>())
 	{
 	}
 
@@ -59,11 +61,14 @@ namespace auth_service::controllers
 		auto userData = requestJson.As<auth_service::models::UserDTO>();
 		try
 		{
-			auto [accessToken, refreshToken] = authManager_.AuthenticateUser(userData);
+			auto [accessToken, refreshToken] =
+				authManager_.AuthenticateUser(userData);
 
 			auto& response = request.GetHttpResponse();
-			response.SetHeader(std::string_view("Authorization"), "Bearer " + accessToken.first);
-			response.SetHeader(std::string_view("X-Refresh-Token"), refreshToken.first);
+			response.SetHeader(std::string_view("Authorization"),
+							   "Bearer " + accessToken.first);
+			response.SetHeader(std::string_view("X-Refresh-Token"),
+							   refreshToken.first);
 			response.SetStatus(userver::server::http::HttpStatus::kOk);
 
 			userver::formats::json::ValueBuilder valueBuilder;
@@ -80,17 +85,17 @@ namespace auth_service::controllers
 		}
 	}
 
-	
-
-	RefreshHandler::RefreshHandler(const userver::components::ComponentConfig& config,
+	RefreshHandler::RefreshHandler(
+		const userver::components::ComponentConfig& config,
 		const userver::components::ComponentContext& context)
 		: HttpHandlerJsonBase(config, context),
-		  jwtManager_(context.FindComponent<auth_service::managers::JwtManager>())
+		  jwtManager_(
+			  context.FindComponent<auth_service::managers::JwtManager>())
 	{
 	}
 
-
-	userver::formats::json::Value RefreshHandler::HandleRequestJsonThrow(const userver::server::http::HttpRequest& request,
+	userver::formats::json::Value RefreshHandler::HandleRequestJsonThrow(
+		const userver::server::http::HttpRequest& request,
 		const userver::formats::json::Value& requestJson,
 		userver::server::request::RequestContext& context) const
 	{
@@ -98,16 +103,20 @@ namespace auth_service::controllers
 
 		if (refreshToken == "")
 		{
-			throw userver::server::handlers::ClientError(userver::server::handlers::ExternalBody{"TOKEN_NOT_FOUND"});
+			throw userver::server::handlers::ClientError(
+				userver::server::handlers::ExternalBody{"TOKEN_NOT_FOUND"});
 		}
 
 		try
 		{
-			auto [newAccessToken, newRefreshToken] = jwtManager_.RefreshTokens(refreshToken);
+			auto [newAccessToken, newRefreshToken] =
+				jwtManager_.RefreshTokens(refreshToken);
 
 			auto& response = request.GetHttpResponse();
-			response.SetHeader(std::string_view("Authorization"), "Bearer " + newAccessToken.first);
-			response.SetHeader(std::string_view("X-Refresh-Token"), newRefreshToken.first);
+			response.SetHeader(std::string_view("Authorization"),
+							   "Bearer " + newAccessToken.first);
+			response.SetHeader(std::string_view("X-Refresh-Token"),
+							   newRefreshToken.first);
 			response.SetStatus(userver::server::http::HttpStatus::kOk);
 
 			userver::formats::json::ValueBuilder valueBuilder;
@@ -119,7 +128,8 @@ namespace auth_service::controllers
 		catch (const std::exception& e)
 		{
 			throw userver::server::handlers::ClientError(
-				userver::server::handlers::ExternalBody{fmt::format("ERROR: {}", e.what())});
+				userver::server::handlers::ExternalBody{
+					fmt::format("ERROR: {}", e.what())});
 		}
 	}
 
@@ -130,4 +140,4 @@ namespace auth_service::controllers
 			.Append<RefreshHandler>();
 	}
 
-} // namespace auth_service
+} // namespace auth_service::controllers

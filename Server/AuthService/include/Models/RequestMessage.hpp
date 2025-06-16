@@ -5,16 +5,18 @@
 #include <userver/formats/json/value.hpp>
 namespace auth_service::models
 {
-    enum class SendStatus {kSuccess, kErrorRetryable, kErrorNonRetryable};
+	enum class SendStatus
+	{
+		kSuccess,
+		kErrorRetryable,
+		kErrorNonRetryable
+	};
 
-    struct RequestMessage
-    {
-        std::string topic;
-        std::string key;
-        std::string payload;
-
-        
-
-    };
-}
+	struct RequestMessage
+	{
+		std::string topic;
+		std::string key;
+		std::string payload;
+	};
+} // namespace auth_service::models
 #endif

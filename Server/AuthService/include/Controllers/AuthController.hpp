@@ -1,65 +1,71 @@
 #ifndef AUTH_CONTROLLER_HPP
 #define AUTH_CONTROLLER_HPP
 
-#include "Managers/AuthManager.hpp"
-#include  <userver/components/component_fwd.hpp>
-#include <userver/server/handlers/http_handler_json_base.hpp>
-#include <userver/formats/json.hpp>
+#include <userver/components/component_fwd.hpp>
 #include <userver/components/component_list.hpp>
+#include <userver/formats/json.hpp>
+#include <userver/server/handlers/http_handler_json_base.hpp>
+
+#include "Managers/AuthManager.hpp"
 
 namespace auth_service::controllers
 {
-    class RegisterHandler final : public userver::server::handlers::HttpHandlerJsonBase
-    {
-        public:
-            static constexpr std::string_view kName = "register-handler";
+	class RegisterHandler final
+		: public userver::server::handlers::HttpHandlerJsonBase
+	{
+	   public:
+		static constexpr std::string_view kName = "register-handler";
 
-            RegisterHandler(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
+		RegisterHandler(const userver::components::ComponentConfig& config,
+						const userver::components::ComponentContext& context);
 
-            userver::formats::json::Value HandleRequestJsonThrow(
-                const userver::server::http::HttpRequest& request,
-                const userver::formats::json::Value& request_json,
-                userver::server::request::RequestContext& context) const;
-        
-            private:
-                auth_service::managers::AuthManager& authManager_;
-    };
+		userver::formats::json::Value HandleRequestJsonThrow(
+			const userver::server::http::HttpRequest& request,
+			const userver::formats::json::Value& request_json,
+			userver::server::request::RequestContext& context) const;
 
-    class LoginHandler final : public userver::server::handlers::HttpHandlerJsonBase
-    {
-        public:
-            static constexpr std::string_view kName = "login-handler";
+	   private:
+		auth_service::managers::AuthManager& authManager_;
+	};
 
-            LoginHandler(const userver::components::ComponentConfig& config, const userver::components::ComponentContext& context);
+	class LoginHandler final
+		: public userver::server::handlers::HttpHandlerJsonBase
+	{
+	   public:
+		static constexpr std::string_view kName = "login-handler";
 
-            userver::formats::json::Value HandleRequestJsonThrow(
-                const userver::server::http::HttpRequest& request,
-                const userver::formats::json::Value& request_json,
-                userver::server::request::RequestContext& context) const;
+		LoginHandler(const userver::components::ComponentConfig& config,
+					 const userver::components::ComponentContext& context);
 
-            private:
-                auth_service::managers::AuthManager& authManager_;
-    };
+		userver::formats::json::Value HandleRequestJsonThrow(
+			const userver::server::http::HttpRequest& request,
+			const userver::formats::json::Value& request_json,
+			userver::server::request::RequestContext& context) const;
 
-    class RefreshHandler final : public userver::server::handlers::HttpHandlerJsonBase
-    {
-        public:
-            static constexpr std::string_view kName = "refresh-handler";
+	   private:
+		auth_service::managers::AuthManager& authManager_;
+	};
 
-            RefreshHandler(const userver::components::ComponentConfig& config, const userver::components::ComponentContext&  context);
+	class RefreshHandler final
+		: public userver::server::handlers::HttpHandlerJsonBase
+	{
+	   public:
+		static constexpr std::string_view kName = "refresh-handler";
 
-            userver::formats::json::Value HandleRequestJsonThrow(
-                const userver::server::http::HttpRequest& request,
-                const userver::formats::json::Value& request_json,
-                userver::server::request::RequestContext& context) const;
+		RefreshHandler(const userver::components::ComponentConfig& config,
+					   const userver::components::ComponentContext& context);
 
-            private:
-                auth_service::managers::JwtManager& jwtManager_;
-    };
+		userver::formats::json::Value HandleRequestJsonThrow(
+			const userver::server::http::HttpRequest& request,
+			const userver::formats::json::Value& request_json,
+			userver::server::request::RequestContext& context) const;
 
-    void AddAuthController(userver::components::ComponentList& component_list);
+	   private:
+		auth_service::managers::JwtManager& jwtManager_;
+	};
 
+	void AddAuthController(userver::components::ComponentList& component_list);
 
-}
+} // namespace auth_service::controllers
 
 #endif
