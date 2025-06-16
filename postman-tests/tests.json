@@ -1,0 +1,232 @@
+{
+  "info": {
+    "name": "Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url_auth",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "base_url_profile",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "test_email",
+      "value": ""
+    },
+    {
+      "key": "test_password",
+      "value": "P@ssw0rd123!"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth Flow",
+      "item": [
+        {
+          "name": "Register User",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const randomNum = Math.floor(Math.random() * 9000000) + 1000000;",
+                  "pm.variables.set('test_email', `aboba${randomNum}@gmail.com`);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"{{test_email}}\", \"password\": \"{{test_password}}\"}"
+            },
+            "url": "{{base_url_auth}}/auth/register"
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\": \"{{test_email}}\", \"password\": \"{{test_password}}\"}"
+            },
+            "url": "{{base_url_auth}}/auth/login"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "const authHeader = pm.response.headers.get('Authorization');",
+                  "pm.variables.set('access_token', authHeader.split(' ')[1]);",
+                  "pm.variables.set('refresh_token', pm.response.headers.get('X-Refresh-Token'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Profile Flow",
+      "item": [
+        {
+          "name": "Update Avatar",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "test_avatar.jpg"
+                }
+              ]
+            },
+            "url": "{{base_url_profile}}/profile/avatar"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Avatar upload successful', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "  if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    pm.test('Response contains path', () => {",
+                  "      pm.expect(pm.response.json()).to.have.property('path');",
+                  "    });",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"first_name\": \"Test\", \"last_name\": \"User\", \"username\": \"@testuser\"}"
+            },
+            "url": "{{base_url_profile}}/profile"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Profile updated', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get My Info",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url_profile}}/profile"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Info received', () => pm.response.to.have.status(200));",
+                  "pm.variables.set('user_id', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Other User Info (LAST REQUEST + CLEANUP)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": "{{base_url_profile}}/profile/1"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Other user info received', () => pm.response.to.have.status(200));",
+                  "",
+                  "// CLEANUP START",
+                  "pm.variables.unset('access_token');",
+                  "pm.variables.unset('refresh_token');",
+                  "pm.variables.unset('test_email');",
+                  "pm.variables.unset('user_id');",
+                  "console.log('Все тестовые данные очищены');",
+                  "// CLEANUP END"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
