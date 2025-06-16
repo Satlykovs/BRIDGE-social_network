@@ -17,7 +17,7 @@
 #include "include/Handlers/Http/UpdateConversationHandler.hpp" 
 #include "include/Handlers/Http/GetConversationDetailsHandler.hpp" 
 
-#include <JwtMiddleware.hpp>
+#include "JwtMiddleware.hpp"
 
 int main(int argc, char* argv[]) {
     auto component_list =

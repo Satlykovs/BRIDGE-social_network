@@ -7,8 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
+
+
 find_package(userver REQUIRED core postgresql)
 
+add_subdirectory(../Common/JwtMiddleware ${CMAKE_BINARY_DIR}/Common/JwtMiddleware)
 
 #file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
 
@@ -40,7 +43,7 @@ add_executable(${PROJECT_NAME} main.cpp ${CPP_FILES})
 #target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}-chgen)
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql)
+target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql JwtMiddleware)
 
 find_package(ICU REQUIRED COMPONENTS uc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc)

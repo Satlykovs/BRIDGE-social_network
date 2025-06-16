@@ -2,12 +2,17 @@ cmake_minimum_required(VERSION 3.22)
 
 project(friendship_service)
 
+
+
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 find_package(userver REQUIRED core postgresql chaotic)
+
+add_subdirectory(../Common/JwtMiddleware ${CMAKE_BINARY_DIR}/Common/JwtMiddleware)
 
 
 file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
@@ -44,7 +49,7 @@ add_executable(${PROJECT_NAME} main.cpp ${CPP_FILES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_NAME}_sql ${PROJECT_NAME}-chgen)
 
 
-target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql userver::chaotic)
+target_link_libraries(${PROJECT_NAME} PUBLIC userver::core userver::postgresql userver::chaotic JwtMiddleware)
 
 find_package(ICU REQUIRED COMPONENTS uc)
 target_link_libraries(${PROJECT_NAME} PRIVATE ICU::uc)

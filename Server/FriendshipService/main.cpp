@@ -6,7 +6,7 @@
 #include "Controllers/FriendshipController.hpp"
 #include "Managers/FriendshipManager.hpp"
 #include "Repositories/FriendshipRepository.hpp"
-#include <JwtMiddleware.hpp>
+#include "JwtMiddleware.hpp"
 
 int main(int argc, char* argv[]){
 
