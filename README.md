@@ -77,6 +77,27 @@ docker-compose up --build
 ## 🖥️ Running Client
   Чтобы запустить клиентскую часть, необходимо открыть проект ``Client`` в ``Qt Creator``, запустить сборку проекта.
 
+
+## 🧪 Postman-коллекция
+После настройки и запуска сервера для тестирования некоторых частей API доступна готовая Postman-коллекция:
+1. Установите **Node.js**
+2. Установите **newman**: ```npm install -g newman``` и **html - репортеры**: ```npm install -g newman-reporter-htmlextra```
+2. Импортируйте файл tests из папки postman-tests в Postman или запустите коллекцию с помощью:
+```bash
+ newman run "tests.json" `
+   --iteration-count i `
+   --reporters 'cli,htmlextra,json' `
+   --reporter-htmlextra-export "newman-report.html" `
+   --reporter-htmlextra-title "API Test Report" `
+   --reporter-htmlextra-browserTitle "API Tests" `
+   --reporter-htmlextra-titleSize "5" `
+   --reporter-json-export "newman-report.json" `
+   --color on `
+   --disable-unicode
+```
+``i - параметр, число итераций тестирования коллекции``
+
+
 ## 👥 Authors
 
 - [Satlykov Sanjar](https://github.com/Satlykovs)
