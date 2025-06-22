@@ -48,15 +48,19 @@ components_manager:
       max_request_size: 4194304
       task_processor: main-task-processor
     
-    info-handler:
-      path: /profile
-      method: GET,POST
-      task_processor: main-task-processor
 
     other-user-info-handler:
       path: /profile/{id}
       method: GET
       task_processor: main-task-processor
+
+    
+    info-handler:
+      path: /profile
+      method: GET,POST
+      task_processor: main-task-processor
+
+
     
     logging:  
       fs-task-processor: fs-task-processor
